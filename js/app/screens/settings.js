@@ -1,6 +1,6 @@
 // Settings (01 §2.12) + "What I can play" (01 §2.10, reached with #/settings?rep=1).
 import { h, ICONS, toast, segmented } from '../ui.js';
-import { t, tx, lang, setLang } from '../i18n.js';
+import { t, tx, lang, setLang, cardText, songTitle } from '../i18n.js';
 import { store } from '../store.js';
 import { micSession } from '../micSession.js';
 import { soundHelp, confirmDialog } from '../sheets.js';
@@ -86,12 +86,12 @@ function repertoire(root, go) {
   root.append(h('div.screen.scroll', h('div.settings',
     h('div.topbar', h('button.icon-btn', { type: 'button', 'aria-label': t('common.back'), html: ICONS.back, on: { click: () => go('home') } }), h('h2', t('rep.title'))),
     h('div.set-h', t('rep.songs')),
-    songs.length ? h('div.set-group', songs.map(([sid, s]) => h('div.set-row', h('div.lbl', h('b', s.title), h('span', new Date(s.learnedAt).toLocaleDateString())),
+    songs.length ? h('div.set-group', songs.map(([sid, s]) => h('div.set-row', h('div.lbl', h('b', songTitle(LESSONS.find((l) => l.id === s.lessonId), s.title)), h('span', new Date(s.learnedAt).toLocaleDateString())),
       s.recordings?.[0] ? h('button.btn', { type: 'button', on: { click: () => { log.event('rep_play', { song: sid, what: 'hear' }); playBack(s.recordings[0]); } } }, t('rep.hear')) : null,
       h('button.btn', { type: 'button', on: { click: () => { log.event('rep_play', { song: sid, what: 'play' }); go(`play/${s.lessonId}?resume=0`); } } }, t('rep.play'))))) : h('p.muted', t('rep.empty')),
     skills.length ? h('div.set-h', t('rep.skills')) : null,
-    skills.length ? h('div.set-group', skills.filter((c) => c.kind === 'can').map((c) => h('div.set-row', h('div.lbl', h('b', c.text)))),
-      skills.filter((c) => c.kind === 'almost').map((c) => h('div.set-row', h('div.lbl', h('span', c.text))))) : null,
+    skills.length ? h('div.set-group', skills.filter((c) => c.kind === 'can').map((c) => h('div.set-row', h('div.lbl', h('b', cardText(c.lesson, c))))),
+      skills.filter((c) => c.kind === 'almost').map((c) => h('div.set-row', h('div.lbl', h('span', cardText(c.lesson, c)))))) : null,
   )));
   return null;
 }

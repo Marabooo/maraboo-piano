@@ -78,3 +78,15 @@ export function tx(obj, vars) {
 }
 
 export { pitchClass };
+
+/** Text of a saved "I can" / "Almost" card in the CURRENT language. Cards are saved with the text of
+ *  the language used at completion; rebuild it from the lesson by card id (fallback: saved text). */
+export function cardText(lesson, c) {
+  const src = lesson?.canNow?.find((x) => x.id === c.id);
+  if (!src) return c.text;
+  if (c.kind === 'almost') return src.almost ? t('done.almost', { skill: tx(src.almost) }) : c.text;
+  return tx(c.fallback ? src.fallback : src.text) || c.text;
+}
+
+/** Title of a saved song in the current language (saved title as fallback). */
+export function songTitle(lesson, saved) { return lesson?.song?.title ? tx(lesson.song.title) : saved; }

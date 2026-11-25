@@ -2,7 +2,7 @@
 // "Next lesson" and "Done for now" have EQUAL size and style; nothing is pre-selected.
 // Variant B (neutral "Lesson complete", exploratory A/B) via Settings ▸ For testing or ?done=B.
 import { h, ICONS } from '../ui.js';
-import { t, tx, noteName } from '../i18n.js';
+import { t, tx, noteName, cardText } from '../i18n.js';
 import { store } from '../store.js';
 import { lessonById, nextLesson } from '../../lessons/index.js';
 import { NOTE_COLORS, toMidi } from '../../engine/notes.js';
@@ -31,8 +31,8 @@ export function completeScreen(root, { id }, { go, takePassed }) {
   const rec = sum.recording || store.songs[sum.song?.id]?.recordings?.[0];
 
   const cards = h('div.can-cards', sum.cards.map((c, i) => c.kind === 'can'
-    ? h('div.can-card', { style: { '--lc': NOTE_COLORS[lesson.colour] || 'var(--accent)', animationDelay: `${i * 80}ms` } }, h('span.ck', { html: ICONS.check }), h('span', c.text))
-    : h('div.can-card.almost', { style: { animationDelay: `${i * 80}ms` } }, h('span', c.text),
+    ? h('div.can-card', { style: { '--lc': NOTE_COLORS[lesson.colour] || 'var(--accent)', animationDelay: `${i * 80}ms` } }, h('span.ck', { html: ICONS.check }), h('span', cardText(lesson, c)))
+    : h('div.can-card.almost', { style: { animationDelay: `${i * 80}ms` } }, h('span', cardText(lesson, c)),
       c.practise ? h('button.help-link', { type: 'button', on: { click: () => { log.event('done_choice', { lesson: id, choice: 'practise', step: c.practise, ms: Math.round(performance.now() - shownAt), variant }); const idx = lesson.steps.findIndex((s) => s.id === c.practise); go(`play/${id}?resume=0&step=${idx + 1}`); } } }, t('done.practise')) : null)));
 
   const hear = rec ? h('div.hear', h('button.btn', { type: 'button', on: { click: () => { log.event('hear_mine', { lesson: id }); playBack(rec); } } }, t('done.hear_mine', { song })), h('span.muted.small', t('done.hear_caption'))) : null;
