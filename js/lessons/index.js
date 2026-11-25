@@ -28,7 +28,9 @@ function prepare(lesson, number) {
     if (mel) { const end = Math.max(...mel.map((e) => e[2] + e[3])); notes = notes.filter((e) => e[2] < end); }
     return { ...s, notes };
   });
-  const steps = raw.map((s) => ({
+  // v2 (Round 1): "listen" steps removed — participants played over them or skipped them. Listening
+  // stays available as the "Hear it first" button on every play step. (Content kept in L*.js / design/02.)
+  const steps = raw.filter((s) => s.type !== 'listen').map((s) => ({
     ...s,
     notes: resolve(s.notes, TUNES),
     pad: resolve(s.pad, PADS),

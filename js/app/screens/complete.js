@@ -38,20 +38,19 @@ export function completeScreen(root, { id }, { go, takePassed }) {
   const hear = rec ? h('div.hear', h('button.btn', { type: 'button', on: { click: () => { log.event('hear_mine', { lesson: id }); playBack(rec); } } }, t('done.hear_mine', { song })), h('span.muted.small', t('done.hear_caption'))) : null;
 
   const nextBtn = h('button.btn.big.choice', { type: 'button', disabled: !nxt, on: { click: () => choose('next') } },
-    h('b', t('done.next')), h('span.sub', nxt ? t('done.next_sub', { title: tx(nxt.title), m: nxt.minutes || 3 }) : t('done.next_none')));
-  const doneBtn = h('button.btn.big.choice', { type: 'button', on: { click: () => choose('done') } }, h('b', t('done.today')), h('span.sub', t('done.today_sub')));
+    h('b', t('done.next')), h('span.sub', nxt ? tx(nxt.title) : t('done.next_none')));
+  const doneBtn = h('button.btn.big.choice', { type: 'button', on: { click: () => choose('done') } }, h('b', t('done.today')));
 
   // Variant B (testing/06 §6.3): same layout, sound, animation and buttons; only the skill text is replaced.
   const left = variant === 'B'
     ? h('div', h('div.eyebrow', t('done.eyebrow', { n: lesson.number })), h('h1', t('done.neutral')))
     : h('div', h('div.eyebrow', t('done.eyebrow', { n: lesson.number })), h('h1', sum.headline || tx(lesson.headline)),
-      h('h2.small-h', t('done.can_now')), cards,
-      sum.foundOwn?.length ? h('div.found', h('span.muted', t('done.found_own')), chips(sum.foundOwn)) : null,
-      sum.withHint?.length ? h('div.found', h('span.muted', t('done.with_hint')), chips(sum.withHint)) : null);
+      h('h2.small-h', t('done.can_now')), cards);
+  // v2 (Round 1: "what do I do now?", one participant stuck reading everything): the found-without-help
+  // chips, the "added to…" line and the button sub-texts were removed; the "I can" cards stay (RQ).
   const right = h('div.done-right',
     hear,
-    !song ? null : h('p.added', t('done.added', { song })),
-    h('div.choice-row.two', nextBtn, doneBtn),
+    h('div.choice-row.two', doneBtn, nextBtn),
     h('button.help-link', { type: 'button', on: { click: () => choose('again') } }, song ? t('done.again', { song }) : t('intro.play_again')));
   root.append(h('div.screen.scroll.done-screen', h('div.done-grid', left, right)));
 

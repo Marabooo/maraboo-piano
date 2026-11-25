@@ -206,7 +206,7 @@ function sound() {
   const after = h('div');
   const playB = btn(T('sound_play'), () => { audio.unlock(); audio.playNote(60, 0.9); tries++; yesNo.style.display = ''; }, 'primary');
   const yesNo = h('div.tm-row', { style: { display: 'none' } },
-    btn(T('sound_yes'), () => finish('heard')),
+    btn(T('sound_yes'), () => finish('heard'), 'go'),
     btn(T('sound_no'), () => { after.innerHTML = ''; after.append(h('p', T('sound_after_no')), h('div.tm-row', btn(T('sound_retry'), () => { after.innerHTML = ''; playB.click(); }), btn(T('sound_without'), () => finish('continued_without')))); }));
   const finish = (r) => { S.sound = r === 'heard' ? (tries > 1 ? 'heard' : 'heard') : r === 'continued_without' ? 'continued without' : 'not heard'; ev('soundcheck', { result: r, tries, mitigation: audio.silentMitigation }); if (NS.mode === 'study') { setPhase('app'); go('home', { replace: true }); } else { S.taskIdx = 0; setPhase('intro'); } };
   fullScreen(h('p.tm-lead', T('sound_text')), playB, yesNo, after);

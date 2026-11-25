@@ -4,6 +4,7 @@ import { t, tx, lang, setLang } from '../i18n.js';
 import { makeT } from '../../game/strings.js';
 import { store } from '../store.js';
 import { days } from '../days.js';
+import { loadDays } from '../../game/streak.js';
 import { LESSONS, COMING } from '../../lessons/index.js';
 import { NOTE_COLORS } from '../../engine/notes.js';
 import { openIntro } from './lessonIntro.js';
@@ -30,13 +31,20 @@ export function homeScreen(root, { query }, { go, takePassed }) {
     townSvg(songs.length, LESSONS.length),
     h('span.town-cap', songs.length ? (songs.length === 1 ? t('home.town_caption_one') : t('home.town_caption', { n: songs.length })) : t('home.town_empty')));
 
-  const cont = resumeLesson ? h('button.tile.continue', { type: 'button', on: { click: () => openResume(resumeLesson) } },
-    h('span.ic', { style: { background: 'var(--accent)', color: '#fff' }, html: ICONS.play }),
-    h('span', h('b', t('home.continue', { lesson: tx(resumeLesson.title), n: Math.min(resume.stepIndex + 1, resumeLesson.steps.length), total: resumeLesson.steps.length })))) : null;
+  // v2 (Round 1): one clear "what now" card + a colourful Daily card that glows until today's puzzle is solved.
+  const heroL = resumeLesson || nextL;
+  const hero = heroL ? h('button.hero', { type: 'button', style: { '--lc': NOTE_COLORS[heroL.colour] || 'var(--accent)' }, on: { click: () => (resumeLesson ? openResume(resumeLesson) : openIntro(heroL, { go })) } },
+    h('span.hero-txt',
+      h('span.eyebrow', resumeLesson ? t('home.continue_eyebrow') : t('home.next_eyebrow')),
+      h('b', tx(heroL.title)),
+      h('span.muted', resumeLesson ? t('home.step_of', { n: Math.min(resume.stepIndex + 1, heroL.steps.length), total: heroL.steps.length }) : t('stone.minutes', { n: heroL.minutes || 3 }))),
+    h('span.hero-go', { html: ICONS.play })) : h('p.muted', t('home.all_done'));
 
-  const daily = h('button.tile', { type: 'button', on: { click: () => { log.event('daily_open'); go('game'); } } },
-    h('span.ic', { style: { background: '#fff1d6', color: '#8a5a00' }, html: ICONS.game }),
-    h('span', h('b', t('home.daily_title')), h('span', t('home.daily_sub'))));
+  const today = days.get().today;
+  const solved = !!loadDays()?.days?.[today]?.puzzle;
+  const daily = h('button.daily-card' + (solved ? '.solved' : ''), { type: 'button', on: { click: () => { log.event('daily_open', { solved }); go('game'); } } },
+    h('span.daily-ic', '🧩'),
+    h('span', h('b', t('home.daily_title')), h('span', solved ? t('home.daily_done') : t('home.daily_sub'))));
   const freeTile = h('button.tile', { type: 'button', on: { click: () => go('free') } },
     h('span.ic', { style: { background: 'var(--accent-soft)', color: 'var(--accent)' }, html: ICONS.keys }),
     h('span', h('b', t('free.title')), h('span', t('free.sub'))));
@@ -66,7 +74,7 @@ export function homeScreen(root, { query }, { go, takePassed }) {
     path.append(h('div.stone-row' + (i % 2 ? '.zig' : ''), stone));
   });
 
-  const left = h('div.home-left', town, cont, daily, freeTile, tip);
+  const left = h('div.home-left', hero, daily, freeTile, town, tip);
   const el = h('div.screen.home', head, h('div.home-cols', left, path));
   root.append(el);
   if (nextEl) setTimeout(() => nextEl.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
@@ -91,8 +99,8 @@ export function homeScreen(root, { query }, { go, takePassed }) {
       h('h2', t('resume.title')),
       h('p', t('resume.body', { recap: noDot(r.recap || tx(lesson.title)), next: noDot(nextStep ? tx(nextStep.bar || nextStep.card) : tx(lesson.title)) })),
       h('div.row', { style: { justifyContent: 'center' } },
-        h('button.btn.primary', { type: 'button', on: { click: () => { o.close(); go(`play/${lesson.id}`); } } }, t('resume.continue')),
-        h('button.btn', { type: 'button', on: { click: () => { o.close(); store.setResume(null); go(`play/${lesson.id}?resume=0`); } } }, t('resume.over'))),
+        h('button.btn', { type: 'button', on: { click: () => { o.close(); store.setResume(null); go(`play/${lesson.id}?resume=0`); } } }, t('resume.over')),
+        h('button.btn.primary', { type: 'button', on: { click: () => { o.close(); go(`play/${lesson.id}`); } } }, t('resume.continue'))),
     ]);
     o.el.addEventListener('click', (e) => { if (e.target === o.el) o.close(); });
   }

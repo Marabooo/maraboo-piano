@@ -9,8 +9,8 @@ export function soundHelp({ onClose } = {}) {
   log.event('sound_help_open');
   const res = h('p.muted', { style: { minHeight: '1.4em' } });
   const after = h('div.row', { style: { justifyContent: 'center', display: 'none' } },
-    h('button.btn', { type: 'button', on: { click: () => { store.set('soundConfirmed', true); log.event('sound_check', { result: 'works' }); o.close(); } } }, t('sound.works')),
     h('button.btn', { type: 'button', on: { click: () => { log.event('sound_check', { result: 'nothing', mitigation: audio.silentMitigation, state: audio.state }); res.textContent = t('sound.still'); } } }, t('sound.still_btn')),
+    h('button.btn', { type: 'button', on: { click: () => { store.set('soundConfirmed', true); log.event('sound_check', { result: 'works' }); o.close(); } } }, t('sound.works')),
   );
   const o = overlay([
     h('h2', t('sound.title')),

@@ -56,9 +56,9 @@ export default {
       notes: { tune: "frere", bars: [1, 2] }, pad: { tune: "frere", bars: [1, 2] } },
 
     { id: "L1S6", type: "recall", guidance: "recall", hideLabels: true,
-      card: { en: "Now from the names only. Key names are hidden — you know where they are.",
-              ro: "Acum doar după nume. Numele clapelor sunt ascunse — știi unde sunt." },
-      bar:  { en: "From the names: play the line.", ro: "După nume: cântă rândul." },
+      card: { en: "Now from the note names only. The names on the keys are hidden — you know where they are.",
+              ro: "Acum doar după numele notelor. Numele de pe clape sunt ascunse — știi unde sunt." },
+      bar:  { en: "From the note names: play the line.", ro: "După numele notelor: cântă rândul." },
       phrase: { en: "Frère Jacques from the note names", ro: "Frère Jacques după numele notelor" },
       notes: { tune: "frere", bars: [1, 2] } },   // shown as chips: C D E C · C D E C
   ],

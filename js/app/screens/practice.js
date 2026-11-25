@@ -60,6 +60,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const input = new InputHub({ audio });
   input.attachKeyboard(kb);
   const offKeys = input.attachComputerKeys(window, { transpose: () => { const lo = kb.visibleRange().lo; return Math.floor((lo + 11) / 12) * 12 - 60; } });
+  // v2 (Round 1): keys pressed on a computer keyboard light up on screen like a touch
+  const offCk = input.on('computerkey', ({ midi, down }) => kb.keyElement(midi)?.classList.toggle('is-down', down));
   let offMic = null;
   if (mic) {
     const m = micSession.listener;
@@ -255,6 +257,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   // ---------- cards in the lane ----------
   function showCard({ eyebrow, text, note, buttons = [], className = '' }, onButton) {
     cardLayer.innerHTML = '';
+    // v2 (Round 1): the go-on button (primary) is always on the RIGHT, other options on the left
+    buttons = [...buttons.filter((b) => !b.primary), ...buttons.filter((b) => b.primary)];
     const c = h('div.step-card' + className, eyebrow ? h('div.eyebrow', eyebrow) : null, h('p.card-text', text),
       note ? h('p.muted.small', note) : null,
       buttons.length ? h('div.row.card-btns', buttons.map((b) => h('button.btn' + (b.primary ? '.primary' : ''), { type: 'button', on: { click: () => onButton(b.id) } }, b.label))) : null);
@@ -274,7 +278,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     canvas.style.display = 'none';
     coach.textContent = '';
     const off = () => {};
-    return { destroy() { removeEventListener('resize', layout); input.detachAll(); offKeys(); offMic?.(); kb.destroy(); fall.destroy(); audio.allOff(); off(); } };
+    return { destroy() { removeEventListener('resize', layout); input.detachAll(); offKeys(); offCk(); offMic?.(); kb.destroy(); fall.destroy(); audio.allOff(); off(); } };
   }
 
   // ---------- lesson ----------
@@ -384,7 +388,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
       removeEventListener('resize', layout);
       offTap();
       if (!runner.finished) runner.stop('leave');
-      input.detachAll(); offKeys(); offMic?.();
+      input.detachAll(); offKeys(); offCk(); offMic?.();
       kb.destroy(); fall.destroy(); audio.allOff();
     },
   };
