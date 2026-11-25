@@ -15,12 +15,15 @@
 import { Emitter } from './emitter.js';
 import { describe, isBlack, pitchClass, toMidi, whiteIndex, whiteToMidi } from './notes.js';
 
+// v0.3.2 (student's own check, 25 Nov: "the tips pop up too fast"): every level comes later than
+// in 01 §5.2 ([3,6,10,15] / [4,8,12,18]) so the instruction is read first, and one wrong press only
+// gets the wrong-note bubble — the ladder starts climbing from the 2nd wrong press (see _ladderWrong).
 const LADDER = {              // seconds from the due beat (play) or prompt start / last success (find, recall)
-  show: [3, 6, 10, 15],
-  remind: [1.5, 6, 10, 15],
-  recognise: [3, 6, 10, 15],
-  find: [4, 8, 12, 18],
-  recall: [4, 8, 12, 18],
+  show: [5, 9, 14, 20],
+  remind: [3, 9, 14, 20],
+  recognise: [5, 9, 14, 20],
+  find: [7, 12, 17, 24],
+  recall: [7, 12, 17, 24],
 };
 const PATTERN2 = new Set([0, 2, 4]);        // C D E live around the two black keys
 const BLACK2 = [1, 3], BLACK3 = [6, 8, 10];
@@ -201,7 +204,12 @@ export class LessonRunner extends Emitter {
     const L = this._ladder;
     if (!L) return;
     if (countIt) L.wrongs++;
-    if (this.o.hints !== 'ask' && L.wrongs) this._ladderSet(Math.min(3, L.wrongs), 'wrong');
+    if (this.o.hints !== 'ask' && L.wrongs >= 2) this._ladderSet(Math.min(3, L.wrongs - 1), 'wrong');
+  }
+  /** Names on the hinted keys/blocks — only when the lesson hid the labels, never when the learner chose Off. */
+  _force(midis) {
+    const m = this.o.revealNames && !this.o.revealNames() ? [] : midis;
+    this.kb.setForcedLabels(m); this.fall.setForcedLabels(m);
   }
   _ladderResultFromNone(r) {
     if (r.hint === 0 && r.wrongs === 0) { if (++this._cleanStreak >= 2) this._carry = false; }
@@ -336,7 +344,7 @@ export class LessonRunner extends Emitter {
     } else if (level === 2 && target != null) {
       this.kb.setTargets([target], { level: 'strong' });
       this.kb.keyElement(target)?.classList.add('fill');
-      this.kb.setForcedLabels([target]);
+      this._force([target]);
       this.emit('tag', { midi: target, text: this._noteHintText(target, pr.h2), kind: 'hint', ms: 0 });
     } else if (level === 3 && target != null) {
       if (!this.mic) this.audio.playNote(target, 0.6, { velocity: 0.6 });
@@ -538,7 +546,7 @@ export class LessonRunner extends Emitter {
           const g = fall.groups[index];
           if (level(g) === 'show' || this._carry) {
             this.kb.setTargets(midis, { level: 'soft' });
-            this.kb.setForcedLabels(midis); fall.setForcedLabels(midis);
+            this._force(midis);
           }
         }),
         fall.on('waitstart', ({ index, midis }) => {
@@ -609,7 +617,7 @@ export class LessonRunner extends Emitter {
     const m = midis[0];
     if (level === 1) {
       this.kb.setTargets(midis, { level: 'soft' });
-      this.kb.setForcedLabels(midis); this.fall.setForcedLabels(midis);
+      this._force(midis);
       if (stillHeld) this.emit('tag', { midi: m, text: t('hint.tap_again', { note: this._name(m) }), kind: 'hint', ms: 0 });
     } else if (level === 2) {
       this.kb.setTargets(midis, { level: 'strong' });

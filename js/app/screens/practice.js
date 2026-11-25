@@ -231,7 +231,10 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     const off = kb.root.getBoundingClientRect().left - stage.getBoundingClientRect().left;
     const cx = off + s.x + s.w / 2;
     const w = rec.el.offsetWidth || 160;
-    const x = clamp(cx - w / 2, 4, stage.clientWidth - w - 4);
+    const x = Math.round(clamp(cx - w / 2, 4, stage.clientWidth - w - 4));
+    // ignore sub-2px changes (keyboard re-measures on iOS toolbar/resize ticks made the bubble jitter)
+    if (rec.x != null && Math.abs(rec.x - x) < 2) return;
+    rec.x = x;
     rec.el.style.left = x + 'px';
   }
   function positionTags() { tagEls.forEach(positionTag); }
@@ -285,6 +288,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
       options: {
         t, tx, noteName, noteHint: NOTE_HINT, patternHint: PATTERN_HINT,
         labels: () => (labelsHidden ? 'off' : store.settings.labels),
+        revealNames: () => labelsHidden, // a hint may show a hidden name; a learner's own "Off" stays off
+
         waitMode: waitMode(), speed, hints: S.hints, practiceMode: mic ? 'mic' : 'touch', backing: S.backing,
       },
     });

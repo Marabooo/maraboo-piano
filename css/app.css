@@ -303,8 +303,9 @@ textarea.summary { color-scheme: dark; width: 100%; min-height: 160px; border-ra
 .practice { padding: 0; }
 .p-top { height: 44px; min-height: 44px; gap: 2px; padding: 0 calc(var(--safe-r) + 6px) 0 calc(var(--safe-l) + 4px); margin-top: var(--safe-t); }
 .free-title { padding: 0 8px; }
-.coach-slot { flex: 1; min-width: 0; font-size: 15px; font-weight: 600; line-height: 1.2; padding: 0 8px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; transition: opacity .3s; }
-.coach-slot.dim { opacity: .7; }
+/* The instruction is the first thing to read (student's own check, 25 Nov): centred in the bar, a bit bigger. */
+.coach-slot { flex: 1; min-width: 0; font-size: 18px; font-weight: 700; line-height: 1.2; padding: 0 12px; text-align: center; color: var(--text); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; transition: opacity .3s; }
+.coach-slot.dim { opacity: .85; }
 .coach-slot.faded { opacity: 0; }
 .coach-slot.kind-hint { color: var(--focus); }
 .coach-slot.kind-done { color: #8FD86A; }
@@ -321,13 +322,14 @@ textarea.summary { color-scheme: dark; width: 100%; min-height: 160px; border-ra
 .step-card .card-btns { margin-top: 6px; }
 @keyframes card-in { from { opacity: 0; transform: translateY(12px); } }
 .tags { position: absolute; left: 0; right: 0; bottom: 6px; height: 0; z-index: 4; pointer-events: none; }
-.tag { position: absolute; bottom: 0; max-width: 220px; min-height: 28px; padding: 5px 10px; border-radius: 14px; font-size: 13px; font-weight: 650; line-height: 1.25; background: var(--cream); color: var(--text); box-shadow: var(--shadow); transition: opacity .3s; white-space: normal; }
+/* Hint / wrong-note bubbles: smaller than the instruction, dark text on light (cream text on cream = blank bubble bug). */
+.tag { position: absolute; bottom: 0; max-width: 200px; min-height: 24px; padding: 4px 9px; border-radius: 12px; font-size: 12px; font-weight: 650; line-height: 1.25; background: var(--cream); color: var(--ink); box-shadow: var(--shadow); transition: opacity .3s; white-space: normal; animation: tag-in .25s ease-out; }
 .tag.kind-hint { background: var(--focus); color: var(--ink); }
-.tag.kind-pointer { background: var(--focus); color: var(--ink); animation: bob 1s ease-in-out infinite; }
+.tag.kind-pointer { background: var(--focus); color: var(--ink); }
+@keyframes tag-in { from { opacity: 0; transform: translateY(4px); } }
 .tag.kind-info { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--outline); }
 .tag.out { opacity: 0; }
 .tag .ptr { margin-right: 4px; }
-@keyframes bob { 50% { transform: translateY(-4px); } }
 .chips-row { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; z-index: 3; padding: 0 8px; }
 .nchip { min-width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; font-weight: 800; background: var(--surface-2); box-shadow: inset 0 0 0 1.5px var(--outline); padding: 0 8px; }
 .nchip.cur { box-shadow: inset 0 0 0 3px var(--cream); }
@@ -348,7 +350,7 @@ textarea.summary { color-scheme: dark; width: 100%; min-height: 160px; border-ra
 .big-map { width: 100%; height: 48px; display: block; border-radius: 8px; background: #0b0c12; cursor: grab; }
 .paused-overlay { position: absolute; inset: 0; z-index: 9; border: 0; background: rgba(18,20,28,.82); font-size: 18px; font-weight: 700; color: var(--text); cursor: pointer; }
 .kb-wrap { padding: 0 calc(var(--safe-r) + 8px) var(--safe-b) calc(var(--safe-l) + 8px); height: 140px; }
-.practice.portrait .coach-slot { position: absolute; top: calc(var(--safe-t) + 44px); left: 0; right: 0; height: 40px; display: flex; align-items: center; padding: 0 16px; }
+.practice.portrait .coach-slot { position: absolute; top: calc(var(--safe-t) + 44px); left: 0; right: 0; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 16px; }
 .practice.portrait .stage { margin-top: 40px; }
 .practice.compact .lane { opacity: .9; }
 .demo .lane { filter: saturate(.85); }

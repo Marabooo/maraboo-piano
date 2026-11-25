@@ -1,7 +1,7 @@
 // Klang service worker: network-first for app files (testers always get the latest version when
 // online), cache fallback offline; cache-first for the immutable piano samples.
 // After adding files, add them to PRECACHE and bump VERSION.
-const VERSION = 'klang-v0.3.1';
+const VERSION = 'klang-v0.3.2';
 const PRECACHE = [
   './', './index.html', './manifest.webmanifest', './css/app.css', './css/keyboard.css',
   './js/main.js',
