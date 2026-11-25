@@ -6,6 +6,7 @@ import { STRINGS } from './strings.js';
 import { describe, pitchClass } from '../engine/notes.js';
 import { store } from './store.js';
 import { wrapNote } from './notemark.js';
+import { log } from '../engine/log.js';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 const SOLF = { C: 'Do', D: 'Re', E: 'Mi', F: 'Fa', G: 'Sol', A: 'La', B: 'Si' };
@@ -16,6 +17,18 @@ export function lang() {
   if (store.settings.lang) return store.settings.lang;
   // Student decision (25 Nov): English by default for everyone; Romanian via Settings or ?lang=ro.
   return 'en';
+}
+
+/** Switch UI language (home flag button or Settings). Test mode hears 'klang:lang' and records the
+ *  switch; a ?lang= in the address would override the choice, so it is removed before reloading. */
+export function setLang(l, from = 'settings') {
+  if (l !== 'en' && l !== 'ro') return;
+  const prev = lang();
+  window.dispatchEvent(new CustomEvent('klang:lang', { detail: { to: l, from: prev, via: from } }));
+  log.event('lang_change', { to: l, from: prev, via: from });
+  store.set('lang', l);
+  const u = new URL(location.href); u.searchParams.delete('lang'); history.replaceState(history.state, '', u);
+  location.reload();
 }
 
 /** Naming system used in text: the label mode, or the last naming system when labels are off. */

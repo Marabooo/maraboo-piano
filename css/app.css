@@ -458,3 +458,12 @@ body.tm-bar-on #app { top: calc(44px + var(--safe-t)); }
    (student request 25 Nov; one orange/pink highlight would read as D/C). Markers: js/app/notemark.js */
 .nn { background: var(--nn, var(--focus)); color: var(--ink); font-weight: 800; padding: 0 .3em; margin: 0 .04em; border-radius: .35em; -webkit-box-decoration-break: clone; box-decoration-break: clone; white-space: nowrap; }
 .tag .nn, .step-card .nn { box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+
+/* Language flag button on Home (next to the gear) + chooser */
+.flag-btn { width: 34px; height: 34px; padding: 0; border-radius: 50%; overflow: hidden; border: 0; cursor: pointer; flex: none; box-shadow: 0 0 0 2px var(--line); background: var(--surface-2); margin: 5px; position: relative; }
+.flag-btn::after { content: ''; position: absolute; inset: -5px; } /* 44 px tap area */
+.flag-btn svg, .flag-dot svg { width: 100%; height: 100%; display: block; }
+.lang-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.lang-choice { min-height: 64px; border: 0; border-radius: 14px; background: var(--surface-2); color: var(--text); display: flex; align-items: center; gap: 10px; padding: 0 14px; cursor: pointer; font-size: 16px; font-family: inherit; }
+.lang-choice[aria-pressed="true"] { box-shadow: inset 0 0 0 2.5px var(--cream); }
+.flag-dot { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex: none; box-shadow: 0 0 0 1.5px var(--line); }

@@ -1,6 +1,6 @@
 // Settings (01 §2.12) + "What I can play" (01 §2.10, reached with #/settings?rep=1).
 import { h, ICONS, toast, segmented } from '../ui.js';
-import { t, tx, lang } from '../i18n.js';
+import { t, tx, lang, setLang } from '../i18n.js';
 import { store } from '../store.js';
 import { micSession } from '../micSession.js';
 import { soundHelp, confirmDialog } from '../sheets.js';
@@ -52,7 +52,7 @@ export function settingsScreen(root, { query }, { go }) {
       row(t('settings.backing'), toggle('backing')),
       row(t('settings.test_sound'), h('button.btn', { type: 'button', on: { click: () => { audio.unlock(); const t0 = audio.now() + 0.05; [60, 64, 67].forEach((m, i) => audio.playNote(m, 0.6, { when: t0 + i * 0.25 })); } } }, '▶')),
       row(t('sound.title'), h('button.btn', { type: 'button', on: { click: () => soundHelp() } }, t('pause.sound_help'))),
-      row(t('settings.language'), segmented([{ value: 'en', label: 'English' }, { value: 'ro', label: 'Română' }], lang(), (v) => { store.set('lang', v); go('settings', { replace: true }); location.reload(); })),
+      row(t('settings.language'), segmented([{ value: 'en', label: 'English' }, { value: 'ro', label: 'Română' }], lang(), (v) => { go('settings', { replace: true }); setLang(v, 'settings'); })),
     ),
     h('button.set-h.link', { type: 'button', on: { click: () => { testing.style.display = testing.style.display ? '' : 'none'; } } }, t('settings.testing') + ' ▾'),
     testing,

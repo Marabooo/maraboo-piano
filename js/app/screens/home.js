@@ -1,6 +1,6 @@
 // Home (01 §2.2): header (wordmark, days chip, gear) · town · continue card · daily card · path.
 import { h, ICONS, toast, overlay } from '../ui.js';
-import { t, tx, lang } from '../i18n.js';
+import { t, tx, lang, setLang } from '../i18n.js';
 import { makeT } from '../../game/strings.js';
 import { store } from '../store.js';
 import { days } from '../days.js';
@@ -20,7 +20,9 @@ export function homeScreen(root, { query }, { go, takePassed }) {
   const resumeLesson = resume && LESSONS.find((l) => l.id === resume.lessonId);
 
   const daysChip = h('button.chip.days-chip', { type: 'button', 'aria-label': t('home.days_chip', { n: days.total() }), on: { click: openDays } }, '☀ ' + String(days.total()));
-  const head = h('div.home-head', h('div.logo', h('i'), 'Klang'), h('div.spacer'), daysChip,
+  // Language: round flag button next to the gear (student request, 25 Nov) — opens a two-option chooser.
+  const langBtn = h('button.flag-btn', { type: 'button', 'aria-label': t('settings.language') + ': ' + LANG_NAME[lang()], title: t('settings.language'), html: FLAGS[lang()], on: { click: openLang } });
+  const head = h('div.home-head', h('div.logo', h('i'), 'Klang'), h('div.spacer'), daysChip, langBtn,
     h('button.icon-btn', { type: 'button', 'aria-label': t('settings.title'), title: t('settings.title'), html: ICONS.gear, on: { click: () => go('settings') } }));
 
   const songs = Object.values(store.songs);
@@ -72,6 +74,12 @@ export function homeScreen(root, { query }, { go, takePassed }) {
   else { const d = days.get(); if (d.welcomeBack) { toast(makeT(lang())('days.welcome_back', { n: d.total }), 3500); days.dismissWelcomeBack(); } }
   if (passed?.openLesson) { const l = LESSONS.find((x) => x.id === passed.openLesson); if (l) setTimeout(() => openIntro(l, { go }), 50); }
 
+  function openLang() {
+    log.event('lang_open', { from: 'home' });
+    const o = overlay([h('h2', t('settings.language')),
+      h('div.lang-choices', ['en', 'ro'].map((l) => h('button.lang-choice', { type: 'button', 'aria-pressed': String(lang() === l), on: { click: () => { o.close(); if (l !== lang()) setLang(l, 'home'); } } },
+        h('span.flag-dot', { html: FLAGS[l] }), h('b', LANG_NAME[l]))))]);
+  }
   function soon() {
     const o = overlay([h('p', t('stone.coming_soon_body', { n: LESSONS.length })), h('button.btn', { type: 'button', on: { click: () => o.close() } }, t('common.close'))]);
   }
@@ -120,3 +128,10 @@ function townSvg(n, total) {
   const d = document.createElement('span'); d.className = 'town-art'; d.innerHTML = s + '</svg>';
   return d;
 }
+
+const LANG_NAME = { en: 'English', ro: 'Română' };
+// Inline SVG flags (emoji flags don't render on Windows). Sliced to fill the round button.
+const FLAGS = {
+  en: '<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="fl-uk"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#fl-uk)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>',
+  ro: '<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1" height="2" fill="#002B7F"/><rect x="1" width="1" height="2" fill="#FCD116"/><rect x="2" width="1" height="2" fill="#CE1126"/></svg>',
+};

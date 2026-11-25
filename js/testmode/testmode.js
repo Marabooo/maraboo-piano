@@ -80,6 +80,8 @@ export function startTestMode() {
     if (NS.mode === 'study' && device().standalone && !NS.code) S.storageReset = true;
     save();
   }
+  // the app's own language switch (home flag / Settings) counts as a switch too, and must survive the reload
+  addEventListener('klang:lang', (e) => { const to = e.detail?.to; if (!S || !to || to === S.lang) return; S.langSwitches = (S.langSwitches || 0) + 1; ev('lang_switch', { to, via: e.detail.via }); lang = S.lang = to; save(); });
   lang = S.lang;
   store.set('lang', lang === 'ro' ? 'ro' : 'en');
   store.set('labels', store.settings.labels === 'solfege' && S.phase !== 'app' && !S.tasks.T2 ? 'letters' : store.settings.labels);
