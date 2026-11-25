@@ -1,4 +1,5 @@
 // Small DOM helpers and inline icons (no external assets, works offline).
+import { hasMarks, rich, plain } from './notemark.js';
 
 /** h('div.class#id', {attrs, on: {click}}, ...children) */
 export function h(tag, props = {}, ...children) {
@@ -16,11 +17,11 @@ export function h(tag, props = {}, ...children) {
     else if (k === 'html') el.innerHTML = v;
     else if (k === 'style' && typeof v === 'object') for (const [sk, sv] of Object.entries(v)) { if (sk.startsWith('--')) el.style.setProperty(sk, sv); else el.style[sk] = sv; }
     else if (k in el && k !== 'list' && typeof v !== 'string') el[k] = v;
-    else el.setAttribute(k, v === true ? '' : v);
+    else el.setAttribute(k, v === true ? '' : typeof v === 'string' ? plain(v) : v);
   }
   for (const c of children.flat()) {
     if (c == null || c === false) continue;
-    el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+    el.append(c instanceof Node ? c : hasMarks(c) ? rich(c) : document.createTextNode(String(c)));
   }
   return el;
 }

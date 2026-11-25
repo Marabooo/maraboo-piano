@@ -1,13 +1,13 @@
 // Klang service worker: network-first for app files (testers always get the latest version when
 // online), cache fallback offline; cache-first for the immutable piano samples.
 // After adding files, add them to PRECACHE and bump VERSION.
-const VERSION = 'klang-v0.3.2';
+const VERSION = 'klang-v0.3.3';
 const PRECACHE = [
   './', './index.html', './manifest.webmanifest', './css/app.css', './css/keyboard.css',
   './js/main.js',
   './js/engine/audio.js', './js/engine/emitter.js', './js/engine/falling.js', './js/engine/input.js',
   './js/engine/keyboard.js', './js/engine/lesson.js', './js/engine/log.js', './js/engine/notes.js', './js/engine/pitch.js',
-  './js/app/router.js', './js/app/store.js', './js/app/ui.js', './js/app/i18n.js', './js/app/strings.js',
+  './js/app/router.js', './js/app/store.js', './js/app/ui.js', './js/app/i18n.js', './js/app/notemark.js', './js/app/strings.js',
   './js/app/days.js', './js/app/micSession.js', './js/app/sheets.js', './js/app/portrait.js',
   './js/app/screens/home.js', './js/app/screens/lessonIntro.js', './js/app/screens/mode.js',
   './js/app/screens/practice.js', './js/app/screens/complete.js', './js/app/screens/settings.js', './js/app/screens/game.js',

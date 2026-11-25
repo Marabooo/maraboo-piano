@@ -1,6 +1,7 @@
 // Practice screen (01 §2.6–2.8, §3, §6, §7, §8). Also "free play" (no lesson).
 import { h, ICONS, toast } from '../ui.js';
-import { t, tx, noteName, naming } from '../i18n.js';
+import { t, tx, noteName, markNote, naming } from '../i18n.js';
+import { rich, plain } from '../notemark.js';
 import { store } from '../store.js';
 import { days } from '../days.js';
 import { micSession } from '../micSession.js';
@@ -210,7 +211,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   fall.on('pending', ({ midis }) => {
     drawMap();
     if (!midis.length) return;
-    if (performance.now() - movedAt < 1500) { setTimeout(() => { if (!midis.every((m) => kb.isVisible(m))) { kb.ensureVisible(midis); toast(t('toast.moved', { note: noteName(midis[0]) }), 1600); } }, 1500); return; }
+    if (performance.now() - movedAt < 1500) { setTimeout(() => { if (!midis.every((m) => kb.isVisible(m))) { kb.ensureVisible(midis); toast(t('toast.moved', { note: markNote(midis[0]) }), 1600); } }, 1500); return; }
     kb.ensureVisible(midis);
   });
 
@@ -246,7 +247,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     clearTimeout(dimT);
     if (kind === 'hide') { coach.classList.add('faded'); return; }
     coach.className = 'coach-slot kind-' + kind;
-    coach.textContent = text;
+    coach.replaceChildren(rich(text)); // note names highlighted
     if (ms) dimT = setTimeout(() => coach.classList.add('faded'), ms);
     else if (kind === 'step') dimT = setTimeout(() => coach.classList.add('dim'), 6000);
   }
@@ -286,7 +287,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     runner = new LessonRunner({
       lesson, keyboard: kb, falling: fall, audio, input, log,
       options: {
-        t, tx, noteName, noteHint: NOTE_HINT, patternHint: PATTERN_HINT,
+        t, tx, noteName: markNote, noteHint: NOTE_HINT, patternHint: PATTERN_HINT,
         labels: () => (labelsHidden ? 'off' : store.settings.labels),
         revealNames: () => labelsHidden, // a hint may show a hidden name; a learner's own "Off" stays off
 
@@ -347,7 +348,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     chipsRow.innerHTML = '';
     c.names.forEach((n, i) => {
       const done = i < c.index;
-      chipsRow.append(h('span.nchip', { class: (done ? 'done' : '') + (i === c.index ? ' cur' : ''), style: done ? { background: NOTE_COLORS[c.letters[i]] } : {} }, n));
+      chipsRow.append(h('span.nchip', { class: (done ? 'done' : '') + (i === c.index ? ' cur' : ''), style: done ? { background: NOTE_COLORS[c.letters[i]] } : {} }, plain(n)));
       if (i % 4 === 3 && i < c.names.length - 1) chipsRow.append(h('span.nsep', '·'));
     });
   }

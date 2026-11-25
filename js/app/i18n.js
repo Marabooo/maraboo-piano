@@ -5,6 +5,7 @@
 import { STRINGS } from './strings.js';
 import { describe, pitchClass } from '../engine/notes.js';
 import { store } from './store.js';
+import { wrapNote } from './notemark.js';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 const SOLF = { C: 'Do', D: 'Re', E: 'Mi', F: 'Fa', G: 'Sol', A: 'La', B: 'Si' };
@@ -34,11 +35,17 @@ export function noteName(x, mode = naming()) {
   return mode === 'solfege' ? (SOLF[x[0]] || x) + x.slice(1) : x;
 }
 
-/** Fill {C}… note tokens and {var} tokens. */
+/** Note name wrapped in highlight markers (see notemark.js); use for names shown in UI text. */
+export function markNote(x, mode = naming()) {
+  const letter = typeof x === 'number' ? describe(x).letter : String(x)[0];
+  return wrapNote(noteName(x, mode), letter);
+}
+
+/** Fill {C}… note tokens (highlighted) and {var} tokens. */
 export function fill(str, vars = {}) {
   return String(str).replace(/\{([A-Za-z_]+)\}/g, (m, k) => {
     if (k in vars) return vars[k];
-    if (LETTERS.includes(k)) return noteName(k);
+    if (LETTERS.includes(k)) return markNote(k);
     return m;
   });
 }
