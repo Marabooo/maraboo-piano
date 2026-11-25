@@ -401,7 +401,7 @@ body.tm-bar-on #app { top: calc(44px + var(--safe-t)); }
 #tm-bar .tm-tag { font-size: 10px; background: #fff; color: #333; }
 .tm-n { font-weight: 800; }
 .tm-bar-text { flex: 1; min-width: 0; height: 44px; border: 0; background: none; color: #fff; text-align: left; font: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
-.tm-bar-done, .tm-bar-stuck { min-width: 64px; height: 36px; border-radius: 10px; border: 0; font: 700 14px system-ui, sans-serif; cursor: pointer; }
+.tm-bar-done, .tm-bar-stuck { min-width: 64px; height: 44px; min-height: 44px; border-radius: 10px; border: 0; font: 700 14px system-ui, sans-serif; cursor: pointer; }
 .tm-bar-done { background: #fff; color: #222; }
 .tm-bar-stuck { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.6); font-weight: 600; }
 .tm-panel { position: fixed; left: calc(var(--safe-l) + 8px); right: calc(var(--safe-r) + 8px); top: calc(46px + var(--safe-t)); z-index: 91; overflow: auto;
@@ -438,3 +438,16 @@ body.tm-bar-on #app { top: calc(44px + var(--safe-t)); }
 .tm-sheet { position: fixed; right: 10px; top: calc(var(--safe-t) + 50px); z-index: 96; width: min(360px, calc(100% - 20px)); background: #e9e9ec; color: #1d1f26; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
 /* keyboard uses the full width (only the safe-area inset), so 15 keys fit at ≥ 44 px on a 667 px phone */
 .kb-wrap { padding-left: var(--safe-l); padding-right: var(--safe-r); }
+
+/* v0.3.1: Keys sheet fits above the keys at 844x390 / 667x375 / 740x360, with or without the test bar
+   (team walkthrough W08b). If a sheet is ever taller than the lane it scrolls inside itself. */
+.sheet { max-height: calc(100% - 4px); overscroll-behavior: contain; }
+.sheet.sheet-keys { left: 8px; right: 8px; width: auto; max-width: 780px; margin-left: auto; padding: 8px 12px 10px; }
+.keys-head { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+.keys-head h2 { margin: 0; font-size: 15px; }
+.keys-head .small { font-size: 12px; }
+.sheet-keys .big-map { height: 36px; margin: 6px 0; }
+.keys-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 14px; }
+.keys-controls .row { flex-wrap: nowrap; gap: 8px; }
+.keys-controls .btn { min-height: 44px; padding: 0 14px; font-size: 15px; }
+.keys-controls .seg button { min-height: 38px; padding: 0 10px; font-size: 13px; }

@@ -135,10 +135,11 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
       const map = h('canvas.big-map', { width: 576, height: 64 });
       const size = h('div.seg', ['bigger', 'normal', 'more'].map((k) => h('button', { type: 'button', 'aria-pressed': String(S.keySize === k), on: { click: (e) => { store.set('keySize', k); [...e.target.parentNode.children].forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))); applyKeySize(); log.event('size_change', { size: k }); drawBigMap(map); } } }, t('keys.' + k))));
       bindMap(map);
-      body = [h('h2', t('keys.title')), map, h('p.muted.small', t('keys.map_hint')),
-        h('div.row', h('button.btn', { type: 'button', on: { click: () => { kb.shiftOctave(-1); log.event('keys_change', { how: 'lower' }); setTimeout(() => drawBigMap(map), 420); } } }, t('keys.lower')),
-          h('button.btn', { type: 'button', on: { click: () => { kb.shiftOctave(1); log.event('keys_change', { how: 'higher' }); setTimeout(() => drawBigMap(map), 420); } } }, t('keys.higher'))),
-        h('div.row', h('span.muted', t('keys.size')), size), free ? null : h('p.muted.small', t('keys.follow'))];
+      body = [h('div.keys-head', h('h2', t('keys.title')), h('span.muted.small', t('keys.map_hint') + (free ? '' : ' ' + t('keys.follow')))), map,
+        h('div.keys-controls',
+          h('div.row', h('button.btn', { type: 'button', on: { click: () => { kb.shiftOctave(-1); log.event('keys_change', { how: 'lower' }); setTimeout(() => drawBigMap(map), 420); } } }, t('keys.lower')),
+            h('button.btn', { type: 'button', on: { click: () => { kb.shiftOctave(1); log.event('keys_change', { how: 'higher' }); setTimeout(() => drawBigMap(map), 420); } } }, t('keys.higher'))),
+          h('div.row', h('span.muted.small', t('keys.size')), size))];
       setTimeout(() => drawBigMap(map), 0);
     } else if (kind === 'pause') {
       const sp = h('div.seg', [[0.75, 'speed.slower'], [1, 'speed.normal']].map(([v, k]) => h('button', { type: 'button', 'aria-pressed': String(speed === v), on: { click: (e) => { speed = v; if (runner) runner.o.speed = v; fall.setSpeed(v); [...e.target.parentNode.children].forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))); log.event('speed_change', { speed: v }); } } }, t(k))));
@@ -155,7 +156,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
         ),
       ];
     }
-    const sheet = h('div.sheet', { role: 'dialog' }, body);
+    const sheet = h('div.sheet.sheet-' + kind, { role: 'dialog' }, body);
     const scrim = h('div.sheet-scrim', { on: { click: close } });
     sheetLayer.append(scrim, sheet);
     sheetOpen = { kind, el: sheet, scrim };

@@ -50,6 +50,7 @@ function render() {
   const screen = ROUTES[name] || ROUTES.home;
   try { current?.destroy?.(); } catch (e) { console.error(e); }
   root.innerHTML = '';
+  const ov = document.getElementById('overlay-root'); if (ov) ov.innerHTML = ''; // no modal survives a screen change
   log.event('screen', { name, param });
   current = screen(root, { id: param, query }, { go, takePassed }) || null;
   updatePortraitHint(name);

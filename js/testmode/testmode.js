@@ -72,9 +72,10 @@ export function startTestMode() {
   if (!NS.mode) return null;
   try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { S = null; }
   if (q.get('reset') === '1' && NS.mode === 'test' && confirm('Reset this test session on this phone?')) { wipeNamespace(); S = null; location.replace(location.pathname + '?test=1' + (q.get('pid') ? '&pid=' + q.get('pid') : '') + (q.get('m') ? '&m=1' : '')); return null; }
-  const firstLang = q.get('lang') || ((navigator.language || '').toLowerCase().startsWith('ro') ? 'ro' : 'en');
+  // English by default for everyone (student's decision); the participant can switch on the first screen.
+  const firstLang = q.get('lang') === 'ro' ? 'ro' : 'en';
   if (!S) {
-    S = { v: 1, mode: NS.mode, code: NS.code || randomCode(), m: q.get('m') === '1', lang: firstLang, phase: NS.mode === 'test' ? 'welcome' : 'sm1',
+    S = { v: 1, mode: NS.mode, code: NS.code || randomCode(), m: q.get('m') === '1', lang: firstLang, langStart: firstLang, langSwitches: 0, phase: NS.mode === 'test' ? 'welcome' : 'sm1',
       about: {}, tasks: {}, final: {}, taskIdx: 0, startedAt: new Date().toISOString(), dayStats: {}, checkins: {}, maxDay: 0 };
     if (NS.mode === 'study' && device().standalone && !NS.code) S.storageReset = true;
     save();
@@ -163,7 +164,7 @@ function render() {
 
 function welcome() {
   const study = NS.mode === 'study';
-  const langSw = h('div.tm-lang', ...['en', 'ro'].map((l) => h('button.tm-chip', { type: 'button', 'aria-pressed': String(lang === l), on: { click: () => { lang = S.lang = l; store.set('lang', l); save(); render(); } } }, l.toUpperCase())));
+  const langSw = h('div.tm-lang', ...['en', 'ro'].map((l) => h('button.tm-chip', { type: 'button', 'aria-pressed': String(lang === l), on: { click: () => { if (l !== lang) { S.langSwitches = (S.langSwitches || 0) + 1; ev('lang_switch', { to: l }); } lang = S.lang = l; store.set('lang', l); save(); render(); } } }, l.toUpperCase())));
   fullScreen(langSw, h('span.tm-tag', study ? 'STUDY' : 'TEST'),
     h('h1', study ? T('sm1_title') : T('welcome_title')),
     h('p', study ? T('sm1_body') : T('welcome_body')),
@@ -231,7 +232,8 @@ function startTask() {
   ev('task_start', { task: t.id });
   S.phase = 'task'; save();
   clearFull();
-  go('home', { replace: true });
+  closeOverlays();
+  go('home', { replace: true, data: { fromTest: true } }); // data forces a re-render even if already on Home
   showBar();
 }
 
@@ -245,6 +247,11 @@ function showBar() {
     h('button.tm-bar-stuck', { type: 'button', on: { click: () => endTask('stuck') } }, T('stuck')));
   bar.id = 'tm-bar';
   document.body.append(bar);
+}
+/** Close app modals, popovers and study sheets (e.g. a "Welcome back" card left open when Done was tapped). */
+function closeOverlays() {
+  const ov = document.getElementById('overlay-root'); if (ov) ov.innerHTML = '';
+  document.querySelectorAll('.tm-sheet, .toast').forEach((e) => e.remove());
 }
 function hideBar() { bar?.remove(); bar = null; panel?.remove(); panel = null; document.body.classList.remove('tm-bar-on'); }
 function togglePanel() {
@@ -268,7 +275,9 @@ function endTask(outcome) {
   rec.auto = autoCheck(t.id, rec);
   rec.pauses = pauses(rec);
   rec.labelsEnd = store.settings.labels;
+  rec.modeEnd = store.settings.practiceMode === 'mic' ? 'mic' : 'tap';
   ev('task_end', { task: t.id, outcome, auto: rec.auto });
+  closeOverlays();
   setPhase('after');
 }
 
@@ -372,6 +381,8 @@ function visibleMs(rec, E) {
 }
 
 // ---------- summaries (06 §8) ----------
+/** Language the participant ended up using + whether they switched on the first screen. */
+const langLine = () => `${lang.toUpperCase()} (start ${(S.langStart || 'en').toUpperCase()}, switched ${S.langSwitches || 0}x)`;
 const qa = (s) => `"${(s || '-').replace(/\s+/g, ' ').trim() || '-'}"`;
 function countBy(arr) { const m = {}; arr.forEach((x) => { m[x] = (m[x] || 0) + 1; }); return Object.entries(m).map(([k, v]) => `${k} x${v}`).join(', ') || '-'; }
 const CONTROL_TYPES = { labels_change: (e) => 'labels', keys_change: (e) => (e.how === 'higher' ? 'octaveUp' : e.how === 'lower' ? 'octaveDown' : 'map'), size_change: (e) => 'size:' + e.size, sheet_open: (e) => 'open:' + e.kind, setting: (e) => 'setting:' + e.key, action: (e) => 'action:' + e.id, mode_choice: (e) => 'mode', screen: (e) => (e.name === 'settings' ? 'settings' : null) };
@@ -387,7 +398,7 @@ function testSummary() {
   const a = S.about;
   const lines = [
     'KLANG TEST SUMMARY v1',
-    `ID ${S.code} | app ${VERSION()} | ${S.m ? 'moderated' : 'remote'} | lang ${lang.toUpperCase()}`,
+    `ID ${S.code} | app ${VERSION()} | ${S.m ? 'moderated' : 'remote'} | lang ${langLine()}`,
     `Started ${localDate(startAt)} ${pad2(startAt.getHours())}:${pad2(startAt.getMinutes())} | total ${mss(total)}`,
     `Device ${d.cls}, ${d.os}, ${d.browser}, ${d.standalone ? 'installed' : 'browser tab'}${d.inapp ? ', in-app browser' : ''}`,
     `Screen ${d.w}x${d.h} | rotations ${orients.length} | now ${innerWidth > innerHeight ? 'landscape' : 'portrait'}`,
@@ -406,7 +417,8 @@ function testSummary() {
     if (t.id === 'T1') {
       lines.push(`${head} | progress ${r.progress || '-'} | pace ${r.pace || '-'}`);
       const mc = E.filter((e) => e.type === 'mode_choice');
-      lines.push(`  mode ${store.settings.practiceMode === 'mic' ? 'mic' : 'tap'} chosen after ${mc[0] ? secs(tsOf(mc[0])) : '-'}s, switched ${Math.max(0, mc.length - 1)}x`);
+      const firstMode = mc[0] ? (mc[0].mode === 'mic' ? 'mic' : 'tap') : (r.modeEnd || '-'); // the FIRST choice in T1
+      lines.push(`  mode ${firstMode} chosen after ${mc[0] ? secs(tsOf(mc[0])) : '-'}s, switched ${Math.max(0, mc.length - 1)}x`);
       const steps = [];
       for (const st of E.filter((e) => e.type === 'step_start' && e.lesson === 'L1')) {
         const end = E.find((e) => e.type === 'step_end' && e.stepId === st.stepId && Date.parse(e.at) >= Date.parse(st.at));
@@ -445,10 +457,11 @@ function testSummary() {
       const go1 = E.find((e) => e.type === 'game_opened');
       lines.push(`${head} | seeded ${SEED_STREAK ? 'yes' : 'no'} | game opened after ${go1 ? secs(tsOf(go1)) + 's' : '-'} | rounds ${E.filter((e) => e.type === 'game_solved').length} | streak seen ${E.some((e) => e.type === 'days_open') ? 'yes' : 'no'}`);
     } else if (t.id === 'T6') {
-      const mic = E.find((e) => e.type === 'mode_choice' && e.mode === 'mic');
+      // mic chosen via the lesson's mode screen OR Settings > Play on (both log mode_choice)
+      const mic = E.find((e) => (e.type === 'mode_choice' && e.mode === 'mic') || (e.type === 'setting' && e.key === 'practiceMode' && e.value === 'mic'));
       const ms = E.find((e) => e.type === 'mic_start'), me = E.find((e) => e.type === 'mic_error');
       const back = mic && E.some((e) => Date.parse(e.at) > Date.parse(mic.at) && ((e.type === 'mode_choice' && e.mode === 'touch') || (e.type === 'setting' && e.key === 'practiceMode' && e.value === 'touch')));
-      lines.push(`${head} | mode mic selected ${mic ? 'yes' : 'no'} after ${mic ? secs(tsOf(mic)) + 's' : '-'} | mic ${ms ? 'granted' : me ? (me.code === 'denied' ? 'denied' : 'error') : 'not asked'} | notes heard ${E.filter((e) => e.type === 'mic_note').length} | back to tap ${back ? 'yes' : 'no'}`);
+      lines.push(`${head} | mode mic selected ${mic ? 'yes' : 'no'}${mic?.from ? ' (' + mic.from + ')' : ''} after ${mic ? secs(tsOf(mic)) + 's' : '-'} | mic ${ms ? 'granted' : me ? (me.code === 'denied' ? 'denied' : 'error') : 'not asked'} | notes heard ${E.filter((e) => e.type === 'mic_note').length} | back to tap ${back ? 'yes' : 'no'}`);
     }
     lines.push(`  answer: ${ans('q')}`);
   }
@@ -500,7 +513,7 @@ function studySummary() {
   }
   return [
     'KLANG STUDY SUMMARY v1',
-    `Code ${S.code} | cfg ${S.variant || 'a'} | app ${VERSION()} | lang ${lang.toUpperCase()}${S.codeNotInList ? ' | code_not_in_list' : ''}`,
+    `Code ${S.code} | cfg ${S.variant || 'a'} | app ${VERSION()} | lang ${langLine()}${S.codeNotInList ? ' | code_not_in_list' : ''}`,
     `Day 1 ${S.day1 || '-'} | finished on day ${S.finishedDay || '-'} | storage reset ${S.storageReset ? 'yes' : 'no'} | clock issue ${S.clockIssue ? 'yes' : 'no'}`,
     `Device ${d.cls}, ${d.os}, ${d.browser}, ${d.standalone ? 'installed' : 'browser tab'}`,
     `About piano=${a.piano || '-'} other=${a.other || '-'} home=${a.home || '-'} school=${a.school || '-'} knowsC=${a.knowsC || '-'} matters=${a.matters || '-'} apps=${a.apps || '-'} age=${a.age || '-'}`,

@@ -19,6 +19,17 @@ export function settingsScreen(root, { query }, { go }) {
   const seg = (key, opts, after) => segmented(opts.map(([v, l]) => ({ value: v, label: l })), S[key], (v) => { store.set(key, v); log.event('setting', { key, value: v }); after?.(v); });
   const vol = h('input', { type: 'range', min: 0, max: 100, value: Math.round(S.volume * 100), 'aria-label': t('settings.volume'), on: { input: (e) => { const v = e.target.value / 100; store.set('volume', v); audio.setVolume(v); } } });
   const toggle = (key, after) => { const b = h('button.toggle', { type: 'button', role: 'switch', 'aria-checked': String(!!S[key]), on: { click: () => { const v = !store.settings[key]; store.set(key, v); b.setAttribute('aria-checked', String(v)); after?.(v); } } }); return b; };
+  // "Play on": choosing My piano never switches silently (D2): it opens the beta explainer -> permission ->
+  // sound check (mode.js), which sets the mode only on success and falls back to the screen otherwise.
+  const modeSeg = () => {
+    const cur = S.practiceMode === 'mic' ? 'mic' : 'touch';
+    const sg = segmented([{ value: 'touch', label: t('intro.mode_screen') }, { value: 'mic', label: t('intro.mode_mic') }], cur, (v) => {
+      log.event('mode_choice', { mode: v, from: 'settings' });
+      if (v === 'mic') { sg.setValue(cur); go('mode/settings?explain=1'); return; }
+      store.set('practiceMode', 'touch'); micSession.stop(); log.event('setting', { key: 'practiceMode', value: 'touch' });
+    }, { label: t('settings.mode') });
+    return sg;
+  };
   const summary = h('textarea.summary', { readonly: true, style: { display: 'none' } });
   const testing = h('div.set-group', { style: { display: 'none' } },
     row(t('settings.wait'), seg('waitMode', [['soft', 'Soft'], ['strict', 'Stop']]), `${t('wait.soft')} · ${t('wait.strict')}`),
@@ -32,7 +43,7 @@ export function settingsScreen(root, { query }, { go }) {
     h('div.topbar', h('button.icon-btn', { type: 'button', 'aria-label': t('common.back'), html: ICONS.back, on: { click: () => go('home') } }), h('h2', t('settings.title'))),
     h('div.set-group',
       row(t('settings.labels'), seg('labels', [['letters', t('labels.letters')], ['solfege', t('labels.solfege')], ['off', t('labels.off')]], (v) => { if (v !== 'off') store.set('lastNaming', v); })),
-      row(t('settings.mode'), seg('practiceMode', [['touch', t('intro.mode_screen')], ['mic', t('intro.mode_mic')]], (v) => { if (v === 'touch') micSession.stop(); })),
+      row(t('settings.mode'), modeSeg()),
       row(t('settings.keysize'), seg('keySize', [['bigger', t('keys.bigger')], ['normal', t('keys.normal')], ['more', t('keys.more')]])),
       row(t('settings.hints'), seg('hints', [['auto', t('hints.auto')], ['ask', t('hints.ask')]])),
     ),

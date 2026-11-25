@@ -122,6 +122,10 @@ retries after a mistake, hints shown by level, lessons left early, daily game pl
   T3 a later `kb_range` reaches higher than the first one in the task · T4 `app_hidden` in a lesson, then a step ≥ the one left
   and ≥ 1 accepted note · T5 `game_opened` + (`game_solved` or `game_played`) · T6 mode = mic.
 - Not built: the standalone "Enter your study code" screen (§3) and the T5 streak seed (`SEED_STREAK = false`, by design).
+- Test/study screens and the app default to **English** (student decision); `&lang=ro` or the first-screen switch changes it.
+  The summary header records `lang EN (start EN, switched 0x)`.
+- Settings ▸ Play on ▸ My piano goes through the same explainer → permission → sound check as the lesson route (`#/mode/settings?explain=1`).
+- Re-check script for the v0.3.1 fixes: `node dev/checks/testmode.mjs`.
 - Study mode: Home chip "ⓘ Study" (no day counter), one optional check-in card per day on Home after the first lesson/game,
   SM-4 on day ≥ 6 (logged `day6_open`, not counted as a return), per-day table and return routes in the summary.
 
@@ -140,7 +144,9 @@ Nunito is not self-hosted yet (falls back to ui-rounded / system-ui).
 - Hold notes are never judged (spec). `earlyRelease: 'hold'` exists in the engine only for team comparison.
 - Piano map in the Keys sheet is a simplified canvas map (drag/tap) plus "◀ Lower / Higher ▶" buttons and key size.
 - Not built yet: Lesson 7–10 (coming-soon stones), compact next-notes strip (lane < 96 px — lane just gets small),
-  mic "trouble" card, pad swell, building-rise animation, `03_visual_system.md` colours/dark theme, in-app test mode (`testing/06`).
+  mic "trouble" card, pad swell, building-rise animation, `03_visual_system.md` colours/dark theme.
+  (The in-app test mode and 5-day study mode from `testing/06` **are built** in v0.3; see "Test mode / study mode" above.
+  Still missing there: the standalone "Enter your study code" screen and the T5 streak seed, which is off by design.)
 
 ## Audio notes
 - Samples: one every minor third, decoded on the first tap, trimmed onset offset computed at decode time. Until

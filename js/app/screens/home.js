@@ -81,7 +81,7 @@ export function homeScreen(root, { query }, { go, takePassed }) {
     log.event('resume_card', { lesson: lesson.id, step: r.stepIndex });
     const o = overlay([
       h('h2', t('resume.title')),
-      h('p', t('resume.body', { recap: r.recap || tx(lesson.title), next: nextStep ? tx(nextStep.bar || nextStep.card) : tx(lesson.title) })),
+      h('p', t('resume.body', { recap: noDot(r.recap || tx(lesson.title)), next: noDot(nextStep ? tx(nextStep.bar || nextStep.card) : tx(lesson.title)) })),
       h('div.row', { style: { justifyContent: 'center' } },
         h('button.btn.primary', { type: 'button', on: { click: () => { o.close(); go(`play/${lesson.id}`); } } }, t('resume.continue')),
         h('button.btn', { type: 'button', on: { click: () => { o.close(); store.setResume(null); go(`play/${lesson.id}?resume=0`); } } }, t('resume.over'))),
@@ -102,6 +102,8 @@ export function homeScreen(root, { query }, { go, takePassed }) {
   }
   return null;
 }
+
+const noDot = (s) => String(s).trim().replace(/[.!?…]+$/, '');
 
 /** Simple skyline: one building per learned song, dashed plots for the rest (placeholder for 03_visual_system). */
 function townSvg(n, total) {

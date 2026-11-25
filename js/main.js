@@ -15,7 +15,7 @@ audio.on('samplesfailed', (e) => log.event('samples_failed', e));
 audio.on('samplesready', (e) => log.event('samples_ready', { ...e, latency: audio.latency() }));
 audio.on('unlocked', () => {});
 
-// URL hooks for testing (01 §11): ?wait=soft|strict (read in practice), ?lang=en|ro (i18n),
+// URL hooks for testing (01 Â§11): ?wait=soft|strict (read in practice), ?lang=en|ro (i18n),
 // ?mode=screen|mic, ?reset=1, ?lesson=L2&step=3, ?done=A|B (completion variant)
 {
   const q = new URLSearchParams(location.search);
@@ -29,7 +29,7 @@ audio.on('unlocked', () => {});
 audio.setVolume(store.settings.volume);
 applyNoteColorVars();
 // Handy for the team and for the test-mode module (read-only use, please).
-window.klang = { audio, log, store, version: '0.3.0' };
+window.klang = { audio, log, store, version: '0.3.1' };
 startRouter(document.getElementById('app'));
 if (NS.mode) import('./testmode/testmode.js').then((m) => { window.klang.testmode = m.startTestMode(); });
 

@@ -1,5 +1,5 @@
 // Language + note-name rendering.
-// Language: ?lang=en|ro, else saved setting, else browser language (ro* → Romanian, 01 §2.1).
+// Language: ?lang=en|ro, else saved setting, else English (student decision 25 Nov; overrides 01 §2.1).
 // Key-name default stays Letters for everyone (lead decision for test task T2; the spec's
 // "Do Re Mi for Romanian UI" default is deliberately NOT applied — see ARCHITECTURE.md).
 import { STRINGS } from './strings.js';

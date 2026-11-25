@@ -8,7 +8,8 @@ import { audio } from '../../engine/audio.js';
 
 export function modeScreen(root, { id, query }, { go }) {
   const q = new URLSearchParams(location.hash.split('?')[1] || '');
-  const toLesson = () => go(`play/${id}?resume=0`, { replace: true });
+  const fromSettings = id === 'settings';
+  const toLesson = () => (fromSettings ? go('settings', { replace: true }) : go(`play/${id}?resume=0`, { replace: true }));
   const el = h('div.screen');
   root.append(el);
   let cleanup = null;
@@ -37,7 +38,7 @@ export function modeScreen(root, { id, query }, { go }) {
       h('h2', t('mic.ex.title')),
       h('ul.bullets', h('li', t('mic.ex.b1')), h('li', t('mic.ex.b2')), h('li', t('mic.ex.b3'))),
       h('div.row', h('button.btn.primary', { type: 'button', on: { click: ask } }, t('mic.ex.allow')),
-        h('button.btn', { type: 'button', on: { click: () => { store.set('practiceMode', 'touch'); toLesson(); } } }, t('mic.ex.instead'))),
+        h('button.btn', { type: 'button', on: { click: () => { store.set('practiceMode', 'touch'); log.event('mode_choice', { mode: 'touch', from: 'explainer' }); toLesson(); } } }, t('mic.ex.instead'))),
       h('p.muted.small', t('mic.ex.next_prompt')))));
   };
 
@@ -46,9 +47,11 @@ export function modeScreen(root, { id, query }, { go }) {
     try {
       await micSession.start();
       store.set('practiceMode', 'mic');
+      log.event('mic', { result: 'granted' });
       check();
     } catch (e) {
       store.set('practiceMode', 'touch');
+      log.event('mic', { result: e.code === 'denied' ? 'denied' : 'error', code: e.code });
       el.innerHTML = '';
       el.append(h('div.center-wrap', h('div.card', h('h2', t('mic.denied.title')), h('p', t('mic.denied.body')),
         h('button.btn.primary', { type: 'button', on: { click: toLesson } }, t('mic.denied.btn')))));
@@ -69,7 +72,8 @@ export function modeScreen(root, { id, query }, { go }) {
     cleanup = () => { offL(); offN(); clearTimeout(nothing); };
   };
 
-  if (q.get('mic') === '1') {
+  if (q.get('explain') === '1') explainer();
+  else if (q.get('mic') === '1') {
     // returning mic user: the permission usually persists, so restart listening and go on
     if (micSession.running) toLesson();
     else micSession.start().then(toLesson, () => { store.set('practiceMode', 'touch'); explainer(); });
