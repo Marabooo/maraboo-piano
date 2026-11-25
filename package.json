@@ -1,0 +1,13 @@
+{
+  "name": "klang-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Klang — beginner piano-learning prototype (UXU course). Static site, no build step.",
+  "type": "module",
+  "scripts": {
+    "start": "node dev/serve.mjs",
+    "check:screens": "node dev/checks/screens.mjs",
+    "check:pitch": "node dev/checks/pitch-accuracy.mjs",
+    "check:latency": "node dev/checks/latency.mjs"
+  }
+}

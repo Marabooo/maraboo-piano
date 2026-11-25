@@ -1,0 +1,71 @@
+/* On-screen keyboard (js/engine/keyboard.js). --kw = white key width (JS). --nc / --nd = note colour / deep.
+   Visual system: design/03 (ivory keys, 3 px deep border on lit keys, --miss grey for wrong presses).
+   TARGET ("play here") uses the gold focus colour, never the note colour, so it can't be confused with
+   a wrong-press tint or read as an alarm (lead check, F06). */
+.kb {
+  position: relative; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+  background: #0b0c12; border-radius: 14px 14px 0 0; contain: layout paint;
+}
+.kb-strip { position: absolute; inset: 0 auto 0 0; height: 100%; will-change: transform; }
+.kb .key {
+  position: absolute; top: 0; left: calc(var(--x) * var(--kw)); box-sizing: border-box;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  pointer-events: none; transition: background-color .12s, transform .08s, box-shadow .12s;
+}
+.kb .key.white {
+  width: var(--kw); height: 100%; background: var(--ivory, #ECE6DA);
+  border-left: 1px solid #c9c1b2; border-right: 1px solid #c9c1b2; border-radius: 0 0 8px 8px;
+  box-shadow: inset 0 -5px 0 #d2cabb; z-index: 1;
+}
+.kb .key.black {
+  width: calc(var(--kw) * .6); height: 60%; background: linear-gradient(#2a2d36, var(--key-black, #1A1C22));
+  border-radius: 0 0 7px 7px; box-shadow: inset 0 -4px 0 #000, 0 2px 3px rgba(0,0,0,.4); z-index: 2;
+}
+/* labels */
+.kb .lbl { display: none; line-height: 1; padding-bottom: max(10px, calc(var(--kw) * .14)); color: var(--key-label, #4A4E5A); text-align: center; }
+.kb .lbl b { font-weight: 800; font-size: clamp(14px, calc(var(--kw) * .36), 28px); }
+.kb .lbl small { font-weight: 700; font-size: clamp(10px, calc(var(--kw) * .19), 14px); opacity: .7; margin-left: 1px; vertical-align: -0.15em; }
+.kb .lbl-solfege b { font-size: clamp(13px, calc(var(--kw) * .3), 24px); }
+.kb .key.black .lbl { color: #ddd; padding-bottom: 8px; }
+.kb[data-labels="letters"] .lbl-letters,
+.kb[data-labels="solfege"] .lbl-solfege,
+.kb[data-labels="off"][data-last="letters"] .force-label .lbl-letters,
+.kb[data-labels="off"][data-last="solfege"] .force-label .lbl-solfege { display: block; }
+.kb .key.middle-c::after { content: ''; position: absolute; bottom: 4px; width: 6px; height: 6px; border-radius: 50%; background: var(--key-label, #4A4E5A); opacity: .6; }
+
+/* pressed */
+.kb .key.white.is-down, .kb .key.white.is-demo { background: var(--ivory-down, #D8D1C3); box-shadow: inset 0 -2px 0 #bdb5a6; transform: translateY(2px); }
+.kb .key.white.is-demo { background: color-mix(in srgb, var(--nc) 60%, var(--ivory, #ECE6DA)); }
+.kb .key.black.is-down, .kb .key.black.is-demo { background: #3a3e4a; transform: translateY(1px); }
+
+/* TARGET = "play here": gold ring + soft gold glow at the top of the key (design --focus) */
+.kb .key.is-target { box-shadow: inset 0 0 0 3px var(--focus, #F6C453), inset 0 14px 14px -8px rgba(246,196,83,.55); z-index: 3; }
+.kb .key.black.is-target { box-shadow: inset 0 0 0 3px var(--focus, #F6C453), 0 0 10px rgba(246,196,83,.6); }
+.kb .key.is-target::before {
+  content: ''; position: absolute; top: -2px; left: 50%; width: 0; height: 0; transform: translateX(-50%);
+  border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 9px solid var(--focus, #F6C453);
+  animation: kb-here 1.2s ease-in-out infinite;
+}
+.kb .key.is-target.strong { box-shadow: inset 0 0 0 4px var(--focus, #F6C453), inset 0 30px 22px -10px rgba(246,196,83,.7); }
+.kb .key.white.is-target.fill { background: #f7e7bd; }
+@keyframes kb-here { 50% { transform: translate(-50%, 4px); } }
+
+/* hint highlight: the black-key pattern (two / three) */
+.kb .key.black.is-hint { background: linear-gradient(#5a5f73, #3c4050); box-shadow: 0 0 0 3px rgba(246,196,83,.55), inset 0 -4px 0 #000; }
+
+/* FOUND keys stay lit in their note colour + 3 px deep border (design/03 §2 rule) */
+.kb .key.white.is-found { background: color-mix(in srgb, var(--nc) 55%, var(--ivory, #ECE6DA)); box-shadow: inset 0 0 0 3px var(--nd); }
+.kb .key.white.is-found .lbl, .kb .key.white.pop .lbl { color: var(--ink, #14161F); }
+
+/* correct pop: the key fills with its note colour briefly */
+.kb .key.white.pop { background: var(--nc); box-shadow: inset 0 0 0 3px var(--nd); animation: kb-pop .5s ease-out; }
+.kb .key.black.pop { background: var(--nd); animation: kb-pop .5s ease-out; }
+@keyframes kb-pop { 0% { filter: brightness(1.12); } 100% { filter: none; } }
+/* WRONG: neutral grey tint (--miss), never red */
+.kb .key.white.wrong { background: var(--miss, #B9BCC8); transition: background-color .3s; }
+.kb .key.black.wrong { background: #6b6f7d; }
+.kb .key.done { animation: kb-done .45s ease-out; }
+@keyframes kb-done { 50% { filter: brightness(.93); } }
+
+@media (prefers-reduced-motion: reduce) { .kb .key, .kb .key::before { transition: none; animation: none !important; } }

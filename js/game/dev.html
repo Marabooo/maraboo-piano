@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Klang — Note sort (dev harness)</title>
+<link rel="stylesheet" href="../../css/game.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #12141C; overflow: hidden; }
+  #game { position: fixed; inset: 0; }
+  #devlog { position: fixed; right: 4px; bottom: 4px; max-width: 46vw; font: 11px/1.3 ui-monospace, monospace; color: #A8ADBF; opacity: .7; pointer-events: none; white-space: pre-wrap; text-align: right; }
+  body.shots #devlog { display: none; }
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="devlog"></div>
+<script type="module">
+// Standalone harness for the daily game. Query params (dev only):
+//   ?date=2026-11-25&hour=10   pretend it is that local date/time (puzzle + days use it)
+//   ?lang=en|ro  ?labels=letters|solfege|off  ?done=1,2 (lessons treated as done)
+//   ?reset=1     clear game + days storage first      ?shots=1  hide the dev log line
+import { audio } from '../engine/audio.js';
+import { log } from '../engine/log.js';
+import { store } from '../app/store.js';
+import { mountDailyGame, resetGameData } from './daily-game.js';
+import { getDays, resetDays } from './streak.js';
+
+const q = new URLSearchParams(location.search);
+if (q.get('reset') === '1') { resetGameData(); resetDays(); }
+if (q.get('shots')) document.body.classList.add('shots');
+let now;
+if (q.get('date')) {
+  const [y, m, d] = q.get('date').split('-').map(Number);
+  const h = Number(q.get('hour') ?? 10);
+  const t0 = new Date(y, m - 1, d, h, 0, 0).getTime();
+  now = () => new Date(t0 + performance.now()); // fixed day, clock still ticks
+}
+const done = (q.get('done') || '').split(',').filter(Boolean).map(Number);
+
+audio.preload();
+audio.installUnlockListeners();
+const devlog = document.getElementById('devlog');
+const say = (s) => { devlog.textContent = s; };
+log.subscribe((e) => { if (e.type.startsWith('game')) say(e.type + ' ' + JSON.stringify({ ...e, t: undefined, at: undefined, s: undefined, type: undefined })); });
+
+const container = document.getElementById('game');
+let game;
+function mount() {
+  game = mountDailyGame(container, {
+    audio, store, log, now,
+    lang: q.get('lang') || undefined,
+    labels: q.get('labels') || undefined,
+    lessonDone: q.get('done') != null ? (n) => done.includes(n) : undefined,
+    onExit: () => say('onExit()'),
+    onGoToLesson: (x) => say('onGoToLesson(' + JSON.stringify(x) + ')'),
+  });
+  window.kgame = game;
+}
+mount();
+window.kdev = { getDays: () => getDays(now ? now() : new Date()), log, remount() { game.destroy(); mount(); } };
+</script>
+</body>
+</html>

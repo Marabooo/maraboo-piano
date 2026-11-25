@@ -1,0 +1,113 @@
+/* Klang daily game — Note Sort. Owner: game engineer. Tokens from design/03_visual_system.md.
+   Everything is scoped under .kg so it cannot leak into the shell. If the shell defines the
+   design-03 tokens (--n-C … --n-G, --bg, --surface …) on :root, the game picks them up. */
+.kg {
+  --kg-bg: #12141C; --kg-surface: #1B1E2A; --kg-surface-2: #262A39; --kg-line: #343A4D; --kg-outline: #7D8296;
+  --kg-text: #F3EFE6; --kg-muted: #A8ADBF; --kg-ink: #14161F; --kg-cream: #F3EFE6; --kg-focus: #F6C453;
+  --kg-n0: var(--n-C, #FF6B6B); --kg-n0-deep: var(--n-C-deep, #B8322F);
+  --kg-n1: var(--n-D, #FF9F45); --kg-n1-deep: var(--n-D-deep, #A85A0C);
+  --kg-n2: var(--n-E, #FFD84D); --kg-n2-deep: var(--n-E-deep, #8A6D00);
+  --kg-n3: var(--n-F, #8FD86A); --kg-n3-deep: var(--n-F-deep, #3F7F22);
+  --kg-n4: var(--n-G, #3FD1C2); --kg-n4-deep: var(--n-G-deep, #0F766B);
+  --kg-t-card: 220ms cubic-bezier(.2, .8, .2, 1);
+  position: relative; width: 100%; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; overflow: hidden;
+  padding: calc(env(safe-area-inset-top, 0px) + 8px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 10px) calc(env(safe-area-inset-left, 0px) + 16px);
+  background: var(--kg-bg); color: var(--kg-text);
+  font-family: Nunito, ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight: 600; line-height: 1.35;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.kg *, .kg *::before, .kg *::after { box-sizing: border-box; }
+.kg button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.kg button:focus-visible { outline: 3px solid var(--kg-focus); outline-offset: 2px; }
+.kg [hidden] { display: none !important; }
+
+/* header */
+.kg-top { display: flex; align-items: center; gap: 8px; min-height: 44px; flex: none; }
+.kg-icon-btn { width: 44px; height: 44px; border-radius: 14px; border: 0; background: var(--kg-surface-2); display: grid; place-items: center; flex: none; }
+.kg-titles { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; min-width: 0; }
+.kg-title { margin: 0; font-size: 1.25rem; line-height: 1.3; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.kg-title svg { color: var(--kg-muted); }
+.kg-number { margin: 0; font-size: .875rem; color: var(--kg-muted); }
+
+/* main area */
+.kg-main { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.kg-play { flex: 1; min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+.kg-how { margin: 6px 0 0; font-size: .875rem; color: var(--kg-muted); text-align: center; flex: none; }
+.kg-status { margin: 0; min-height: 1.35em; text-align: center; font-size: .9375rem; color: var(--kg-text); flex: none; }
+.kg-controls { display: flex; justify-content: center; gap: 12px; flex: none; padding-top: 4px; }
+.kg-solved .kg-how, .kg-solved .kg-controls, .kg-solved .kg-status { display: none; }
+
+/* buttons */
+.kg-btn { min-height: 44px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--kg-line); background: var(--kg-surface-2);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; transition: transform 80ms ease-out, opacity 120ms; }
+.kg-btn:active { transform: scale(.97); }
+.kg-btn:disabled { opacity: .4; cursor: default; transform: none; }
+.kg-primary { background: var(--kg-cream); color: var(--kg-ink) !important; border-color: transparent; min-height: 52px; font-weight: 800; }
+
+/* board */
+.kg-board { flex: 1; min-height: 0; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;
+  gap: var(--gap, 10px); --L: 40px; --W: 56px; }
+.kg-board[data-cols="7"] { flex-wrap: nowrap; }
+.kg-tube { width: var(--W); height: calc(var(--L) * 4 + 30px); padding: 14px 0 0; border: 0; background: none;
+  display: flex; align-items: flex-end; justify-content: center; border-radius: 14px; touch-action: manipulation; }
+.kg-tube:focus-visible { outline: none; }
+.kg-tube:focus-visible .kg-glass { outline: 3px solid var(--kg-focus); outline-offset: 3px; }
+.kg-glass { position: relative; display: block; width: 100%; height: calc(var(--L) * 4 + 16px);
+  padding: 10px 4px 4px; border: 2px solid var(--kg-outline); border-top: 0;
+  border-radius: 6px 6px calc(var(--W) / 2) calc(var(--W) / 2);
+  background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.08) 30%, rgba(255,255,255,.02));
+  transition: transform 120ms ease-out, box-shadow 220ms, border-color 220ms; }
+.kg-glass::before { /* rim */ content: ""; position: absolute; left: -5px; right: -5px; top: -2px; height: 4px; border-radius: 4px; background: var(--kg-outline); }
+.kg-stack { position: relative; display: block; width: 100%; height: calc(var(--L) * 4); overflow: hidden;
+  border-radius: 2px 2px calc(var(--W) / 2 - 5px) calc(var(--W) / 2 - 5px); }
+.kg-layer { position: absolute; left: 0; right: 0; bottom: calc(var(--slot) * var(--L)); height: var(--L);
+  background: var(--c); color: var(--kg-ink); display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: clamp(12px, calc(var(--L) * .36), 16px); letter-spacing: .01em;
+  box-shadow: inset 0 -1px 0 rgba(20, 22, 31, .22), inset 0 1px 0 rgba(255, 255, 255, .18); }
+.kg-fly { position: absolute; border-radius: 4px; z-index: 5; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+.kg-lifted .kg-glass { transform: translateY(-12px); }
+.kg-lifted .kg-layer:last-child { filter: brightness(1.12); box-shadow: inset 0 0 0 2px rgba(255,255,255,.75), 0 0 12px var(--c); }
+.kg-done .kg-glass { border-color: var(--c); box-shadow: 0 0 18px color-mix(in srgb, var(--c) 45%, transparent); }
+.kg-done .kg-glass::before { background: var(--c); }
+.kg-ring .kg-glass { box-shadow: 0 0 0 3px var(--c), 0 0 28px var(--c); }
+.kg-ring .kg-layer { filter: brightness(1.18); }
+
+.kg-fx { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+.kg-spark { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--c); transform: translate(-50%, -50%); }
+
+/* result card */
+.kg-result { flex: none; max-height: 62%; overflow-y: auto; background: var(--kg-surface); border-radius: 20px; padding: 16px;
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  animation: kg-card-in var(--kg-t-card) both; -webkit-user-select: text; user-select: text; }
+.kg-solved-title { margin: 0; font-size: 1.5rem; line-height: 1.25; font-weight: 800; text-align: center; outline: none; }
+.kg-tune-line { border: 0; background: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; font-size: 1.0625rem; font-weight: 700; border-radius: 14px; }
+.kg-tune-line svg { color: var(--kg-n2); }
+.kg-chip { margin: 0; align-self: center; padding: 4px 12px; border-radius: 999px; background: var(--kg-surface-2); font-size: .8125rem; font-weight: 700; }
+.kg-muted { margin: 0; color: var(--kg-muted); text-align: center; font-size: .875rem; }
+.kg-small { font-size: .8125rem; margin-top: -4px; }
+.kg-copied { margin: 0; min-height: 0; text-align: center; font-size: .875rem; }
+.kg-copied:empty { display: none; }
+.kg-wide.kg-solved .kg-main { flex-direction: row; }
+.kg-wide .kg-result { max-height: none; width: min(360px, 46%); align-self: stretch; justify-content: center; }
+@keyframes kg-card-in { from { opacity: 0; transform: translateY(10px); } }
+
+/* short landscape phones */
+@media (max-height: 430px) {
+  .kg { padding-top: calc(env(safe-area-inset-top, 0px) + 4px); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); }
+  .kg-title { font-size: 1.125rem; }
+  .kg-how { margin-top: 2px; font-size: .8125rem; }
+  .kg-main { gap: 6px; }
+  .kg-result { padding: 12px; gap: 6px; }
+  .kg-solved-title { font-size: 1.25rem; }
+  .kg-primary { min-height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kg-glass, .kg-btn { transition: opacity 150ms; }
+  .kg-lifted .kg-glass { transform: translateY(-12px); } /* state, not motion: no transition */
+  .kg-result { animation: kg-fade 150ms both; }
+  @keyframes kg-fade { from { opacity: 0; } }
+}
