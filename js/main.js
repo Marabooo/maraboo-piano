@@ -29,7 +29,7 @@ audio.on('unlocked', () => {});
 audio.setVolume(store.settings.volume);
 applyNoteColorVars();
 // Handy for the team and for the test-mode module (read-only use, please).
-window.klang = { audio, log, store, version: '0.8.0' };
+window.klang = { audio, log, store, version: '0.8.1' };
 startRouter(document.getElementById('app'));
 if (NS.mode) import('./testmode/testmode.js').then((m) => { window.klang.testmode = m.startTestMode(); });
 

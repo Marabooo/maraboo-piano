@@ -33,5 +33,5 @@ export default {
     { id: "L9.four", text: { en: "I can play {A}m, {F}, {C} and {G}.", ro: "Pot cânta {A}m, {F}, {C} și {G}." }, earnedIf: { stepDone: "L9S1" } },
     { id: "L9.song", text: { en: "I played a whole pop song with chords.", ro: "Am cântat un cântec pop întreg cu acorduri." }, earnedIf: { stepDone: "L9S2" } },
   ],
-  next: null,
+  next: "L10",
 };
