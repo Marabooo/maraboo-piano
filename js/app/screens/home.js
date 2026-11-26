@@ -5,7 +5,7 @@ import { makeT } from '../../game/strings.js';
 import { store } from '../store.js';
 import { days } from '../days.js';
 import { loadDays } from '../../game/streak.js';
-import { LESSONS, COMING } from '../../lessons/index.js';
+import { LESSONS } from '../../lessons/index.js';
 import { NOTE_COLORS } from '../../engine/notes.js';
 import { openIntro } from './lessonIntro.js';
 import { log } from '../../engine/log.js';
@@ -21,63 +21,35 @@ export function homeScreen(root, { query }, { go, takePassed }) {
   const resumeLesson = resume && LESSONS.find((l) => l.id === resume.lessonId);
 
   const daysChip = h('button.chip.days-chip', { type: 'button', 'aria-label': t('home.days_chip', { n: days.total() }), on: { click: openDays } }, '☀ ' + String(days.total()));
-  // Language: round flag button next to the gear (student request, 25 Nov) — opens a two-option chooser.
   const langBtn = h('button.flag-btn', { type: 'button', 'aria-label': t('settings.language') + ': ' + LANG_NAME[lang()], title: t('settings.language'), html: FLAGS[lang()], on: { click: openLang } });
-  const head = h('div.home-head', h('div.logo', h('i'), 'Klang'), h('div.spacer'), daysChip, langBtn,
-    h('button.icon-btn', { type: 'button', 'aria-label': t('settings.title'), title: t('settings.title'), html: ICONS.gear, on: { click: () => go('settings') } }));
+  const head = h('div.home-head', h('div.logo', h('i'), 'Klang'), h('div.spacer'), daysChip, langBtn);
+
+  // v2 home (26 Nov, after Round 1; chess.com/lichess-like): two big tiles on top (Daily, Free play),
+  // "your songs" in the middle, one big Next lesson button at the bottom. The lesson map is the Learn tab.
+  const today = days.get().today;
+  const solved = !!loadDays()?.days?.[today]?.puzzle;
+  const daily = h('button.big-tile.daily' + (solved ? '.solved' : ''), { type: 'button', on: { click: () => { log.event('daily_open', { solved, from: 'home' }); go('game'); } } },
+    h('span.bt-ic', '🧩'), h('b', t('home.daily_title')), solved ? h('span.bt-done', '✓') : null);
+  const freeTile = h('button.big-tile.free', { type: 'button', on: { click: () => go('free') } },
+    h('span.bt-ic', '🎹'), h('b', t('free.title')));
 
   const songs = Object.values(store.songs);
+  const doneN = LESSONS.filter(done).length;
   const town = h('button.town', { type: 'button', on: { click: () => go('settings?rep=1') }, 'aria-label': t('rep.title') },
     townSvg(songs.length, LESSONS.length),
     h('span.town-cap', songs.length ? (songs.length === 1 ? t('home.town_caption_one') : t('home.town_caption', { n: songs.length })) : t('home.town_empty')));
+  const prog = h('div.home-prog', LESSONS.map((l) => h('i', { style: { background: done(l) ? NOTE_COLORS[l.colour] : '' } })), h('span.muted.small', t('home.lessons_done', { n: doneN, total: LESSONS.length })));
 
-  // v2 (Round 1): one clear "what now" card + a colourful Daily card that glows until today's puzzle is solved.
   const heroL = resumeLesson || nextL;
-  const hero = heroL ? h('button.hero', { type: 'button', style: { '--lc': NOTE_COLORS[heroL.colour] || 'var(--accent)' }, on: { click: () => (resumeLesson ? openResume(resumeLesson) : openIntro(heroL, { go })) } },
-    h('span.hero-txt',
-      h('span.eyebrow', resumeLesson ? t('home.continue_eyebrow') : t('home.next_eyebrow')),
-      h('b', tx(heroL.title)),
-      h('span.muted', resumeLesson ? t('home.step_of', { n: Math.min(resume.stepIndex + 1, heroL.steps.length), total: heroL.steps.length }) : t('stone.minutes', { n: heroL.minutes || 3 }))),
-    h('span.hero-go', { html: ICONS.play })) : h('p.muted', t('home.all_done'));
-
-  const today = days.get().today;
-  const solved = !!loadDays()?.days?.[today]?.puzzle;
-  const daily = h('button.daily-card' + (solved ? '.solved' : ''), { type: 'button', on: { click: () => { log.event('daily_open', { solved }); go('game'); } } },
-    h('span.daily-ic', '🧩'),
-    h('span', h('b', t('home.daily_title')), h('span', solved ? t('home.daily_done') : t('home.daily_sub'))));
-  const freeTile = h('button.tile', { type: 'button', on: { click: () => go('free') } },
-    h('span.ic', { style: { background: 'var(--accent-soft)', color: 'var(--accent)' }, html: ICONS.keys }),
-    h('span', h('b', t('free.title')), h('span', t('free.sub'))));
+  const play = heroL ? h('button.play-btn', { type: 'button', style: { '--lc': NOTE_COLORS[heroL.colour] || 'var(--accent)' }, on: { click: () => (resumeLesson ? openResume(resumeLesson) : openIntro(heroL, { go })) } },
+    h('b', resumeLesson ? t('home.continue_eyebrow') : t('home.next_eyebrow')),
+    h('span', tx(heroL.title))) : h('button.play-btn', { type: 'button', on: { click: () => go('learn') } }, h('b', t('home.all_done_btn')));
 
   const tip = isIOS && !standalone() && !sessionStorage.getItem('klang.iosTip') ? h('p.tip', t('install.tip_ios')) : null;
   if (tip) sessionStorage.setItem('klang.iosTip', '1');
 
-  // path
-  const path = h('div.path-v');
-  if (!done(LESSONS[0]) && !resumeLesson) path.append(h('p.start-first', t('home.start_first', { lesson: tx(LESSONS[0].title) })));
-  let section = null;
-  const all = [...LESSONS.map((l) => ({ l })), ...COMING.map((c) => ({ c }))];
-  let nextEl = null;
-  all.forEach((item, i) => {
-    const sec = item.l ? item.l.section : item.c.section;
-    if (sec !== section && i < LESSONS.length + 1) { section = sec; }
-    const num = item.l ? item.l.number : item.c.number;
-    const title = tx(item.l ? item.l.title : item.c.title);
-    let state = 'ahead';
-    if (item.c) state = 'soon';
-    else if (done(item.l)) state = 'done';
-    else if (item.l === nextL) state = 'next';
-    const stone = h('button.stone2.' + state, { type: 'button', style: { '--lc': item.l ? NOTE_COLORS[item.l.colour] || 'var(--accent)' : 'var(--line)' }, on: { click: () => (item.l ? openIntro(item.l, { go }) : soon()) } },
-      h('span.disc', state === 'done' ? h('span', { html: ICONS.check }) : String(num)),
-      h('span.txt', h('b', title), h('span.muted', state === 'soon' ? t('stone.coming_soon') : t('stone.minutes', { n: item.l.minutes || 3 })), state === 'next' ? h('span.tag2', t('stone.start')) : null));
-    if (state === 'next') nextEl = stone;
-    path.append(h('div.stone-row' + (i % 2 ? '.zig' : ''), stone));
-  });
-
-  const left = h('div.home-left', hero, daily, freeTile, town, tip);
-  const el = h('div.screen.home', head, h('div.home-cols', left, path));
+  const el = h('div.screen.home2', head, h('div.home2-body', h('div.big-tiles', daily, freeTile), prog, town, tip), play);
   root.append(el);
-  if (nextEl) setTimeout(() => nextEl.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
   if (passed?.toast) toast(passed.toast);
   else { const d = days.get(); if (d.welcomeBack) { toast(makeT(lang())('days.welcome_back', { n: d.total }), 3500); days.dismissWelcomeBack(); } }
   if (passed?.openLesson) { const l = LESSONS.find((x) => x.id === passed.openLesson); if (l) setTimeout(() => openIntro(l, { go }), 50); }

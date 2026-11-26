@@ -3,6 +3,14 @@
 // Note-name tokens {C} {D} … render in the current naming system (see noteText in i18n.js).
 
 export const STRINGS = {
+  'tab.home': ['Home', 'Acasă'],
+  'tab.puzzles': ['Puzzles', 'Puzzle-uri'],
+  'tab.learn': ['Learn', 'Lecții'],
+  'tab.settings': ['Settings', 'Setări'],
+  'home.lessons_done': ['{n} of {total} lessons', '{n} din {total} lecții'],
+  'home.all_done_btn': ['All lessons done. See the map', 'Toate lecțiile gata. Vezi harta'],
+  'pz.tiles': ['Note tiles', 'Clape în cădere'],
+  'pz.findkey': ['Find the key', 'Găsește clapa'],
   'labels.off_btn': ['No names', 'Fără nume'],
   'keys.fewer': ['Fewer, bigger keys', 'Mai puține clape, mai mari'],
   'keys.more_n': ['More keys', 'Mai multe clape'],

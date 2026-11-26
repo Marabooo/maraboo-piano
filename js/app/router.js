@@ -7,6 +7,9 @@ import { practiceScreen } from './screens/practice.js';
 import { completeScreen } from './screens/complete.js';
 import { settingsScreen } from './screens/settings.js';
 import { gameScreen } from './screens/game.js';
+import { learnScreen } from './screens/learn.js';
+import { puzzlesScreen } from './screens/puzzles.js';
+import { tabBar, TAB_ROUTES } from './screens/tabs.js';
 import { updatePortraitHint } from './portrait.js';
 import { log } from '../engine/log.js';
 
@@ -19,6 +22,8 @@ const ROUTES = {
   done: completeScreen,
   settings: settingsScreen,
   game: gameScreen,
+  learn: learnScreen,
+  puzzles: puzzlesScreen,
 };
 
 let root = null;
@@ -53,6 +58,9 @@ function render() {
   const ov = document.getElementById('overlay-root'); if (ov) ov.innerHTML = ''; // no modal survives a screen change
   log.event('screen', { name, param });
   current = screen(root, { id: param, query }, { go, takePassed }) || null;
+  const tabbed = TAB_ROUTES.includes(name) || !ROUTES[name];
+  root.classList.toggle('with-tabs', tabbed);
+  if (tabbed) root.append(tabBar(ROUTES[name] ? name : 'home', go));
   updatePortraitHint(name);
 }
 
