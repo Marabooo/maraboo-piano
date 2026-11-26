@@ -58,7 +58,7 @@ export function settingsScreen(root, { query }, { go }) {
     testing,
     h('p.muted.small', t('settings.about')),
     h('p.muted.small', t('settings.credits'), ' ', h('a', { href: './assets/samples/LICENSE.md', target: '_blank', rel: 'noopener' }, 'Licence')),
-    h('p.muted.small', `Version ${window.klang?.version || ''} · sound: ${audio.usingFallback ? 'synth fallback' : 'samples'} · ${audio.silentMitigation}`),
+    h('p.muted.small', `Version ${window.klang?.version || ''} · screen ${innerWidth}×${innerHeight} · sound: ${audio.usingFallback ? 'synth fallback' : 'samples'} · ${audio.silentMitigation}`),
   ));
   root.append(el);
   return null;
