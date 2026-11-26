@@ -8,6 +8,9 @@ import L3 from './L3.js';
 import L4 from './L4.js';
 import L5 from './L5.js';
 import L6 from './L6.js';
+import L7 from './L7.js';
+import L8 from './L8.js';
+import L9 from './L9.js';
 
 /** Resolve { tune, bars: [a, b] } references into plain event arrays (notes, pads, app melody). */
 function resolve(spec, table) {
@@ -36,15 +39,12 @@ function prepare(lesson, number) {
     pad: resolve(s.pad, PADS),
     app: s.app ? { ...s.app, melody: resolve(s.app.melody, TUNES) } : undefined,
   }));
-  return { ...lesson, number, steps, section: lesson.section || ([3, 6].includes(number) ? 'chords' : 'notes') };
+  return { ...lesson, number, steps, section: lesson.section || ([3, 6, 7, 8, 9].includes(number) ? 'chords' : 'notes') };
 }
 
-export const LESSONS = [L1, L2, L3, L4, L5, L6].map((l, i) => prepare(l, i + 1));
+export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L9].map((l, i) => prepare(l, i + 1));
 /** Planned lessons shown as "Coming soon" stones (02 §2). */
 export const COMING = [
-  { number: 7, title: { en: 'Same notes, other places', ro: 'Aceleași note, în alte locuri' }, section: 'moving' },
-  { number: 8, title: { en: 'Three chords: {F} joins', ro: 'Trei acorduri: vine și {F}' }, section: 'chords' },
-  { number: 9, title: { en: 'Your first black key', ro: 'Prima ta clapă neagră' }, section: 'moving' },
   { number: 10, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
 ];
 export { NOTE_HINT, PATTERN_HINT };
