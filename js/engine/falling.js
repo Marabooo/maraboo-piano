@@ -94,7 +94,11 @@ export class FallingNotes extends Emitter {
       if (g && Math.abs(g.beat - n.beat) < 0.01) g.notes.push(n);
       else this.groups.push({ beat: n.beat, notes: [n], state: 'pending', presses: new Map(), waitedFrom: 0, approached: false });
     }
-    this.groups.forEach((g, i) => { g.index = i; g.midis = g.notes.map((n) => n.midi); });
+    this.groups.forEach((g, i) => {
+      g.index = i; g.midis = g.notes.map((n) => n.midi);
+      // v2 (student request): every block of a chord takes the colour of the chord's root, in any order/inversion
+      if (g.notes.length >= 3) { const col = describe(chordRoot(g.midis)).color; g.notes.forEach((n) => { n.color = col; }); }
+    });
     this.app = (phrase.app || []).map((e) => ({ ...e, fired: false, ended: false })).sort((a, b) => a.beat - b.beat);
     this.lastEnd = Math.max(0, ...notes.map((n) => n.end), ...this.app.map((e) => e.beat + (e.dur || 0)));
     this.next = 0;
@@ -429,18 +433,18 @@ export class FallingNotes extends Emitter {
     }
     if (bottom - top < 2) return;
     const offscreen = s.x + s.w < 0 ? -1 : s.x > this.kb.width ? 1 : 0;
-    if (offscreen) { this._drawArrow(c, offscreen, (top + bottom) / 2, d.color); return; }
+    if (offscreen) { this._drawArrow(c, offscreen, (top + bottom) / 2, (n.color || d.color)); return; }
 
     c.save();
     c.globalAlpha = alpha;
     const isPending = g.index === this.next && n.state === 'upcoming';
     if (isPending && this.waiting) {
-      c.shadowColor = d.color;
+      c.shadowColor = (n.color || d.color);
       c.shadowBlur = 10 + 8 * (0.5 + 0.5 * Math.sin(now / 260));
     }
-    c.fillStyle = n.state === 'missed' ? '#4a4f62' : d.color;
+    c.fillStyle = n.state === 'missed' ? '#4a4f62' : (n.color || d.color);
     roundRect(c, x, top, w, bottom - top, Math.min(8, w / 3));
-    if (ghost) { c.strokeStyle = d.color; c.lineWidth = 2; c.stroke(); c.restore(); return; }
+    if (ghost) { c.strokeStyle = (n.color || d.color); c.lineWidth = 2; c.stroke(); c.restore(); return; }
     c.fill();
     c.shadowBlur = 0;
     if (s.black) { c.fillStyle = 'rgba(20,22,31,0.22)'; roundRect(c, x, top, w, bottom - top, Math.min(9, w / 3)); c.fill(); }
@@ -492,4 +496,14 @@ function roundRect(c, x, y, w, h, r) {
 export function phraseRange(phrase) {
   const ms = (phrase.notes || parseSeq(phrase.seq || '')).map((n) => toMidi(n.note ?? n.midi));
   return { lo: Math.min(...ms), hi: Math.max(...ms), midis: ms };
+}
+
+/** Root of a triad (major / minor / diminished) in any inversion; else the lowest note. */
+function chordRoot(midis) {
+  const pcs = new Set(midis.map((m) => m % 12));
+  for (const m of [...midis].sort((a, b) => a - b)) {
+    const r = m % 12;
+    if ((pcs.has((r + 4) % 12) || pcs.has((r + 3) % 12)) && (pcs.has((r + 7) % 12) || pcs.has((r + 6) % 12))) return m;
+  }
+  return Math.min(...midis);
 }
