@@ -625,3 +625,9 @@ body { background: radial-gradient(120% 60% at 0% 0%, rgba(183,155,255,.10), tra
 .chord-w { text-decoration: none; }
 .practice .chord-w { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .btn.play-round { width: 48px; min-width: 48px; height: 48px; padding: 0; border-radius: 50%; flex: none; } .btn.play-round svg { width: 20px; height: 20px; margin-left: 2px; }
+/* v2.4: the rotate hint is a still picture (the looping animation restarted rapidly on iPhone = "shaking") */
+.rot-phone { animation: none !important; width: 76px; height: 44px; }
+.rot-wrap { display: flex; align-items: center; gap: 10px; }
+.rot-arrow { font-size: 34px; color: var(--focus); line-height: 1; }
+.rotate-ic svg { animation: none !important; transform: rotate(-90deg); }
+.stone.next .disc::after { animation: none !important; }

@@ -99,7 +99,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   layout();
   if (innerHeight > innerWidth && matchMedia('(pointer: coarse)').matches && !store.settings.rotTipSeen) {
     store.set('rotTipSeen', true); log.event('rotate_tip');
-    const tip = h('div.rotate-tip', h('div.rot-phone'), h('p', t('rotate.tip')));
+    const tip = h('div.rotate-tip', h('div.rot-wrap', h('span.rot-arrow', '↻'), h('div.rot-phone')), h('p', t('rotate.tip'))); // v2.4: still icon, no animation (it flickered on iPhone)
     const gone = () => { tip.remove(); removeEventListener('resize', onRot); };
     const onRot = () => { if (innerWidth > innerHeight) gone(); };
     tip.addEventListener('pointerdown', gone); addEventListener('resize', onRot);
