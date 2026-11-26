@@ -3,7 +3,7 @@ import { bars } from './shared.js';
 export default {
   id: "L4",
   title:    { en: "Jingle Bells: a whole chorus", ro: "Jingle Bells: tot refrenul" },
-  newSkill: { en: "A whole 16-bar chorus: repeated notes, long and short notes", ro: "Un refren întreg de 16 măsuri: note repetate, note lungi și scurte" },
+  newSkill: { en: "A whole chorus", ro: "Un refren întreg" },
   tune:     { en: "Jingle Bells (chorus)", ro: "Jingle Bells (refrenul)" },
   minutes: 4, colour: "G", newNotes: [],
   range: { low: "C3", high: "C5" },
@@ -29,8 +29,7 @@ export default {
       notes: { tune: "jingle", bars: [9, 16] }, pad: { tune: "jingle", bars: [9, 16] } },
     { id: "L4S5", type: "play", tempo: 90, guidance: "recognise", record: true,
       choice: "labelsOff",  // step card shows two extra buttons: "Names off" / "Keep names"
-      card: { en: "The whole chorus. Want to try it with the key names off? You can turn them back on any time.",
-              ro: "Tot refrenul. Încerci fără numele clapelor? Le poți reaprinde oricând." },
+      card: { en: "The whole chorus.", ro: "Tot refrenul." },
       bar:  { en: "The whole chorus.", ro: "Tot refrenul." },
       phrase: { en: "the whole Jingle Bells chorus", ro: "tot refrenul din Jingle Bells" },
       notes: { tune: "jingle", bars: [1, 16] }, pad: { tune: "jingle", bars: [1, 16] } },

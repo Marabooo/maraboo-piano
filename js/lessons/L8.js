@@ -9,11 +9,11 @@ export default {
   range: { low: "A3", high: "C5" },
   steps: [
     { id: "L8S1", type: "chord-find",
-      card: { en: "Major sounds happy. Move the middle note one key left and it sounds sad: minor.", ro: "Majorul sună vesel. Mută nota din mijloc o clapă la stânga și sună trist: minor." },
+      card: { en: "Major sounds happy, minor sounds sad. One note moves.", ro: "Majorul sună vesel, minorul trist. O notă se mută." },
       prompts: [
-        { target: CH.C4,  glow: "targets", guidance: "show", bar: { en: "{C} major: happy", ro: "{C} major: vesel" } },
-        { target: CH.Cm4, glow: "targets", guidance: "show", bar: { en: "{C} minor: the black key. Sad?", ro: "{C} minor: clapa neagră. Trist?" } },
-        { target: CH.Am3, glow: "targets", guidance: "show", bar: { en: "{A} minor: all white keys", ro: "{A} minor: doar clape albe" } },
+        { target: CH.C4,  glow: "targets", guidance: "show", bar: { en: "{C} major chord: happy", ro: "Acordul {C} major: vesel" } },
+        { target: CH.Cm4, glow: "targets", guidance: "show", bar: { en: "{C} minor chord: sad?", ro: "Acordul {C} minor: trist?" } },
+        { target: CH.Am3, glow: "targets", guidance: "show", bar: { en: "{A} minor chord", ro: "Acordul {A} minor" } },
       ],
       recap: { en: "you heard major and minor", ro: "ai auzit major și minor" } },
     { id: "L8S2", type: "play", tempo: 96, guidance: { default: "recognise", first: 3 }, record: true,

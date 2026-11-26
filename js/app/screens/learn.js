@@ -28,7 +28,7 @@ export function learnScreen(root, _p, { go }) {
       on: { click: () => (l ? openIntro(l, { go }) : overlay([h('p', t('stone.coming_soon_body', { n: LESSONS.length }))])) } },
       h('span.disc', state === 'done' ? h('span', { html: ICONS.check }) : String(l ? l.number : item.c.number)),
       h('span.st-title', tx(l ? l.title : item.c.title)),
-      h('span.muted.small', state === 'soon' ? t('stone.coming_soon') : t('stone.minutes', { n: l.minutes || 3 })));
+      state === 'soon' ? h('span.muted.small', t('stone.coming_soon')) : null);
     if (state === 'next') nextEl = stone;
     map.append(stone);
   });

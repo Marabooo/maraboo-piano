@@ -3,6 +3,7 @@
 // Note-name tokens {C} {D} … render in the current naming system (see noteText in i18n.js).
 
 export const STRINGS = {
+  'mg.best_row': ['Best: {n}', 'Record: {n}'],
   'tab.home': ['Home', 'Acasă'],
   'tab.puzzles': ['Puzzles', 'Puzzle-uri'],
   'tab.learn': ['Learn', 'Lecții'],
@@ -48,7 +49,7 @@ export const STRINGS = {
   'install.tip_ios': ['Tip: Share ▸ Add to Home Screen gives the keyboard more room.', 'Sfat: Partajare ▸ Adaugă pe ecranul principal, ca tastatura să aibă mai mult loc.'],
   'toast.saved': ['Saved, continue any time.', 'Salvat, poți continua oricând.'],
   'toast.done_today': ['Saved. Come back whenever you like.', 'Salvat. Revino când vrei.'],
-  'intro.eyebrow': ['Lesson {n} · about {m} min', 'Lecția {n} · cam {m} min'],
+  'intro.eyebrow': ['Lesson {n}', 'Lecția {n}'],
   'intro.you_learn': ["You'll learn", 'Vei învăța'],
   'intro.you_play': ["You'll play", 'Vei cânta'],
   'intro.start': ['Start', 'Începe'],

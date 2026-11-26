@@ -136,7 +136,7 @@ export class LessonRunner extends Emitter {
     this.kb.clearTargets(); this.kb.setHighlight([]); this.kb.setFound([]); this.kb.setForcedLabels([]);
     this.fall.setForcedLabels([]);
     this.audio.padOff?.({ release: 0.4 });
-    this.emit('cardhide'); this.emit('tagsclear'); this.emit('skipnote', { show: false });
+    this.emit('cardhide'); this.emit('tagsclear'); this.emit('skipnote', { show: false }); this.emit('big', null);
   }
 
   _done({ auto = false, skipped = false } = {}) {
@@ -283,11 +283,13 @@ export class LessonRunner extends Emitter {
       const pc = this._pc(pr);
       this.debugTarget = this._letter(pr);
       this.emit('bar', { text: this.o.tx(pr.bar), kind: 'step' });
+      this.emit('big', { letter: this._letter(pr) }); // v2: the note to find, big in the middle
       if (pr.glow === 'pattern2' || pr.glow === 'pattern3') this.kb.setHighlight(this._patternKeys(pr.glow));
       if (pr.glow === 'targets') this.kb.setTargets(visibleOf(pc), { level: 'soft' });
       this._ladderStart('find', (lvl) => this._findHint(lvl, pr, pc, found), this._carry ? 1 : 0);
     };
     const finish = () => {
+      this.emit('big', null);
       this._ladderStop();
       this.kb.clearTargets(); this.kb.setHighlight([]);
       this.emit('bar', { text: step.after ? this.o.tx(step.after) : t('find.done'), kind: 'done' });

@@ -1,5 +1,5 @@
 // Small DOM helpers and inline icons (no external assets, works offline).
-import { hasMarks, rich, plain } from './notemark.js';
+import { hasMarks, rich, plain, CHORD_RE } from './notemark.js';
 
 /** h('div.class#id', {attrs, on: {click}}, ...children) */
 export function h(tag, props = {}, ...children) {
@@ -21,7 +21,7 @@ export function h(tag, props = {}, ...children) {
   }
   for (const c of children.flat()) {
     if (c == null || c === false) continue;
-    el.append(c instanceof Node ? c : hasMarks(c) ? rich(c) : document.createTextNode(String(c)));
+    el.append(c instanceof Node ? c : hasMarks(c) || CHORD_RE.test(c) ? rich(c) : document.createTextNode(String(c)));
   }
   return el;
 }
@@ -65,6 +65,7 @@ export function overlay(content, { onClose } = {}) {
   const root = document.getElementById('overlay-root');
   const el = h('div.overlay', { role: 'dialog', 'aria-modal': 'true' }, h('div.card', content));
   const close = () => { el.remove(); onClose?.(); };
+  el.addEventListener('click', (e) => { if (e.target === el) close(); }); // v2: tap outside closes
   root.append(el);
   return { el, close };
 }

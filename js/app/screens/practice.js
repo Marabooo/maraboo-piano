@@ -49,7 +49,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const cardLayer = h('div.card-layer');
   const chipsRow = h('div.chips-row', { style: { display: 'none' } });
   const sheetLayer = h('div.sheet-layer');
-  const stage = h('div.stage', canvas, chipsRow, tags, cardLayer, sheetLayer);
+  const bigEl = h('div.find-big', { 'aria-hidden': 'true' });
+  const stage = h('div.stage', canvas, bigEl, chipsRow, tags, cardLayer, sheetLayer);
   const kbEl = h('div');
   const kbWrap = h('div.kb-wrap', kbEl);
   const el = h('div.screen.practice', top, stage, kbWrap);
@@ -242,7 +243,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     clearTimeout(dimT);
     if (kind === 'hide') { coach.classList.add('faded'); return; }
     coach.className = 'coach-slot kind-' + kind;
-    coach.replaceChildren(rich(text)); // note names highlighted
+    coach.replaceChildren(h('span', rich(text))); // note names highlighted; one inline span keeps pills in the line
     if (ms) dimT = setTimeout(() => coach.classList.add('faded'), ms);
     else if (kind === 'step') dimT = setTimeout(() => coach.classList.add('dim'), 6000);
   }
@@ -317,7 +318,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     runner.on('cardhide', hideCard);
     runner.on('bar', setBar);
     runner.on('skipnote', () => {}); // v2: no Skip note
-    runner.on('tag', (x) => { if (x.kind !== 'wrong') showTag(x); }); // v2: no wrong-note bubbles (key still greys)
+    runner.on('tag', (x) => { if (x.kind !== 'wrong' && x.kind !== 'pointer') showTag(x); }); // v2: no wrong-note or "Tap here" bubbles
+    runner.on('big', (x) => { bigEl.replaceChildren(); if (x) bigEl.append(rich(markNote(x.letter))); }); // v2: no wrong-note bubbles (key still greys)
     runner.on('tagsclear', clearTags);
     runner.on('lane', ({ show }) => canvas.classList.toggle('on', show));
     runner.on('demo', ({ on }) => { el.classList.toggle('demo', on); skipNote.style.display = on ? '' : 'none'; skipNote.textContent = on ? t('demo.skip') : t('top.skip'); });

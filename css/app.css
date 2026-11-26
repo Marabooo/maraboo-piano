@@ -600,3 +600,14 @@ body { background: radial-gradient(120% 60% at 0% 0%, rgba(183,155,255,.10), tra
 .mg-big .nn { padding: .05em .35em; border-radius: .25em; }
 .mg-card { position: relative; z-index: 2; text-align: center; }
 .mg-card .card-btns { justify-content: center; }
+/* v2.1: calmer animations (student saw rapid shaking / pulsing), chord underline, big find note */
+.kb .key.is-target::before { animation: none !important; }
+.stone2.next .disc, .stone3.next .disc { animation: none !important; }
+.big-tile.daily, .daily-card { animation: none !important; box-shadow: 0 0 18px rgba(255,122,198,.35), var(--shadow); }
+.big-tile.daily.solved { box-shadow: var(--shadow); }
+.chord-w { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.find-big { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 1; font-size: clamp(44px, 12vh, 84px); font-weight: 800; }
+.find-big .nn { padding: .05em .35em; border-radius: .25em; box-shadow: none; }
+.play-btn .nn { background: var(--nn); color: var(--ink); box-shadow: 0 0 0 1.5px rgba(20,22,31,.45); }
+.pz-best { color: var(--focus); font-weight: 800; font-size: 14px; white-space: nowrap; }
+.mg-best { color: var(--focus); font-weight: 800; font-size: 14px; }

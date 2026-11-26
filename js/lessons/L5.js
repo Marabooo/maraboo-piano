@@ -3,14 +3,13 @@ import { bars } from './shared.js';
 export default {
   id: "L5",
   title:    { en: "{A} and {B}: all seven notes", ro: "{A} și {B}: toate cele șapte note" },
-  newSkill: { en: "{A}, {B}, the whole white-key pattern and the {C} major scale", ro: "{A}, {B}, tot modelul clapelor albe și gama {C} major" },
+  newSkill: { en: "{A}, {B} and the {C} scale", ro: "{A}, {B} și gama {C}" },
   tune:     { en: "Twinkle, Twinkle, Little Star", ro: "Twinkle, Twinkle, Little Star" },
   minutes: 4, colour: "A", newNotes: ["A","B"],
   range: { low: "C3", high: "C5" },
   steps: [
     { id: "L5S1", type: "find",
-      card: { en: "Back to the three black keys. {A} sits between the last two. {B} is just right of them.",
-              ro: "Înapoi la cele trei clape negre. {A} stă între ultimele două. {B} e chiar în dreapta lor." },
+      card: { en: "{A} and {B}: by the three black keys.", ro: "{A} și {B}: lângă cele trei clape negre." },
       prompts: [
         { target: "A", glow: "targets", guidance: "show", bar: { en: "Tap {A}, between the last two black keys.", ro: "Atinge {A}, între ultimele două clape negre." } },
         { target: "B", glow: "targets", guidance: "show", bar: { en: "Tap {B}, just right of the three black keys.", ro: "Atinge {B}, chiar în dreapta celor trei clape negre." } },
@@ -22,7 +21,7 @@ export default {
       prompts: ["G","B","D","A","F","C","E"].map(n => ({ target: n, glow: "none", guidance: "recognise", bar: { en: `{${n}}?`, ro: `{${n}}?` } })),
       recap: { en: "you named all seven white keys", ro: "ai găsit toate cele șapte clape albe" } },
     { id: "L5S3", type: "play", tempo: 80, guidance: { default: "recognise", A: "show", B: "show" },
-      card: { en: "The {C} major scale: every white key from {C} to {C}, up and back down.", ro: "Gama {C} major: toate clapele albe de la {C} la {C}, în sus și înapoi." },
+      card: { en: "Scale: {C} up to {C}, then down.", ro: "Gama: de la {C} la {C}, sus și jos." },
       bar:  { en: "Scale: up to {C}, then back down.", ro: "Gama: în sus până la {C}, apoi înapoi." },
       phrase: { en: "the {C} major scale", ro: "gama {C} major" },
       notes: { tune: "scaleC", bars: [1, 4] } },         // no pad
@@ -36,7 +35,7 @@ export default {
       phrase: { en: "the first part of Twinkle, Twinkle", ro: "prima parte din Twinkle, Twinkle" },
       notes: { tune: "twinkle", bars: [1, 4] }, pad: { tune: "twinkle", bars: [1, 4] } },
     { id: "L5S6", type: "play", tempo: 80, guidance: "recognise", record: true,
-      card: { en: "The whole song. The middle part is new, but it uses the same notes.", ro: "Tot cântecul. Partea din mijloc e nouă, dar folosește aceleași note." },
+      card: { en: "The whole song.", ro: "Tot cântecul." },
       bar:  { en: "The whole song.", ro: "Tot cântecul." },
       phrase: { en: "all of Twinkle, Twinkle", ro: "tot Twinkle, Twinkle" },
       notes: { tune: "twinkle", bars: [1, 12] }, pad: { tune: "twinkle", bars: [1, 12] } },

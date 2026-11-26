@@ -15,8 +15,9 @@ const WHITES = [60, 62, 64, 65, 67, 69, 71];
 function shell(root, go, kind) {
   const score = h('b.mg-score', '0');
   const info = h('span.mg-info');
+  const bestEl = h('span.mg-best', '🏆 ' + (store.settings[kind === 'tiles' ? 'best_tiles' : 'best_findkey'] || 0));
   const top = h('div.mg-top', h('button.icon-btn', { type: 'button', 'aria-label': t('common.back'), html: ICONS.back, on: { click: () => go('puzzles') } }),
-    h('b.mg-title', t(kind === 'tiles' ? 'pz.tiles' : 'pz.findkey')), info, score);
+    h('b.mg-title', t(kind === 'tiles' ? 'pz.tiles' : 'pz.findkey')), info, bestEl, score);
   const stage = h('div.mg-stage');
   const kbEl = h('div'); const kbWrap = h('div.kb-wrap.mg-kb', kbEl);
   const el = h('div.screen.practice.mg', top, stage, kbWrap);
@@ -25,7 +26,7 @@ function shell(root, go, kind) {
   const kb = new Keyboard(kbEl, { start: 'C4', whites: 7, labels: 'off', minKeyPx: 30 });
   const input = new InputHub({ audio }); input.attachKeyboard(kb);
   const card = (title, sub, label, onGo) => { const c = h('div.step-card.mg-card', h('p.card-text', title), sub ? h('p.muted.small', sub) : null, h('div.row.card-btns', h('button.btn.primary', { type: 'button', on: { click: () => { c.remove(); audio.unlock(); onGo(); } } }, label))); stage.append(c); };
-  const best = (k, v) => { if (v != null && v > (store.settings[k] || 0)) store.set(k, v); return store.settings[k] || 0; };
+  const best = (k, v) => { if (v != null && v > (store.settings[k] || 0)) store.set(k, v); bestEl.textContent = '🏆 ' + (store.settings[k] || 0); return store.settings[k] || 0; };
   return { el, stage, kb, input, score, info, card, best, destroy() { input.detachAll(); kb.destroy(); audio.allOff(); } };
 }
 
