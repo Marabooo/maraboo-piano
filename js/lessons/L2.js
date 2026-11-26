@@ -23,7 +23,7 @@ export default {
       prompts: [
         { target: "G", glow: "targets", guidance: "show",
           bar: { en: "Tap {G}", ro: "Atinge {G}" } },
-        { target: "E", glow: "none", guidance: "recognise", bar: { en: "No lights. {E}?", ro: "Fără lumini. {E}?" } },
+        { target: "E", glow: "none", guidance: "recognise", bar: { en: "{E}?", ro: "{E}?" } },
         { target: "G", glow: "none", guidance: "recognise", bar: { en: "{G}?", ro: "{G}?" } },
         { target: "C", glow: "none", guidance: "recognise", bar: { en: "{C}?", ro: "{C}?" } },
         { target: "F", glow: "none", guidance: "recognise", bar: { en: "{F}?", ro: "{F}?" } },
@@ -56,8 +56,8 @@ export default {
       notes: { tune: "ode", bars: [5, 8] }, pad: { tune: "ode", bars: [5, 8] } },
 
     { id: "L2S7", type: "play", tempo: 80, guidance: "recognise", record: true,
-      card: { en: "The whole tune, no lights.", ro: "Toată melodia, fără lumini." },
-      bar:  { en: "The whole tune, no lights.", ro: "Toată melodia, fără lumini." },
+      card: { en: "The whole tune.", ro: "Toată melodia." },
+      bar:  { en: "The whole tune.", ro: "Toată melodia." },
       phrase: { en: "Ode to Joy, both lines", ro: "Oda bucuriei, ambele rânduri" },
       notes: { tune: "ode", bars: [1, 8] }, pad: { tune: "ode", bars: [1, 8] } },
   ],
@@ -74,10 +74,10 @@ export default {
       earnedIf: { share: "L2S2", prompts: [2,3,4,5,6], min: 0.8, maxHint: 1 },
       almost: { en: "naming all five without help", ro: "să le recunosc pe toate cinci fără ajutor" }, practise: "L2S2" },
     { id: "L2.ode",
-      text: { en: "I played Ode to Joy without the keys lighting up.", ro: "Am cântat Oda bucuriei fără să se aprindă clapele." },
+      text: { en: "I played Ode to Joy without help.", ro: "Am cântat Oda bucuriei fără ajutor." },
       earnedIf: { share: "L2S7", min: 0.75, maxHint: 1 },
       fallback: { en: "I played Ode to Joy.", ro: "Am cântat Oda bucuriei." }, fallbackIf: { stepDone: "L2S7" },
-      almost: { en: "playing it without lights", ro: "s-o cânt fără lumini" }, practise: "L2S7" },
+      almost: { en: "playing it without help", ro: "s-o cânt fără ajutor" }, practise: "L2S7" },
   ],
   next: "L3",
 };

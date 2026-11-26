@@ -29,7 +29,7 @@ export default {
         { target: "E", glow: "targets", guidance: "show",
           bar: { en: "Tap {E}", ro: "Atinge {E}" } },
         { target: "C", glow: "none", guidance: "recognise",
-          bar: { en: "{C}, no lights", ro: "{C}, fără lumini" } },
+          bar: { en: "Tap {C}", ro: "Atinge {C}" } },
         { target: "E", glow: "none", guidance: "recognise", bar: { en: "{E}?", ro: "{E}?" } },
         { target: "D", glow: "none", guidance: "recognise", bar: { en: "{D}?", ro: "{D}?" } },
       ],
@@ -48,9 +48,9 @@ export default {
       recap: { en: "you played the first line of Frère Jacques", ro: "ai cântat primul rând din Frère Jacques" } },
 
     { id: "L1S5", type: "play", tempo: 80, guidance: "recognise", record: true,
-      card: { en: "Again, no lights.", ro: "Încă o dată, fără lumini." },
-      bar:  { en: "Same tune, no lights.", ro: "Aceeași melodie, fără lumini." },
-      phrase: { en: "the first line of Frère Jacques, without lights", ro: "primul rând din Frère Jacques, fără lumini" },
+      card: { en: "Once more.", ro: "Încă o dată." },
+      bar:  { en: "Same tune.", ro: "Aceeași melodie." },
+      phrase: { en: "the first line of Frère Jacques, again", ro: "primul rând din Frère Jacques, încă o dată" },
       notes: { tune: "frere", bars: [1, 2] }, pad: { tune: "frere", bars: [1, 2] } },
 
     { id: "L1S6", type: "recall", guidance: "recall", hideLabels: true,

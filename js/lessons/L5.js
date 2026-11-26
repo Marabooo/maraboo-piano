@@ -17,7 +17,7 @@ export default {
       ],
       recap: { en: "you found {A} and {B}", ro: "ai găsit {A} și {B}" } },
     { id: "L5S2", type: "find",
-      card: { en: "All seven names, mixed. No lights.", ro: "Toate cele șapte nume, amestecate. Fără lumini." },
+      card: { en: "All seven names, mixed.", ro: "Toate cele șapte nume, amestecate." },
       prompts: ["G","B","D","A","F","C","E"].map(n => ({ target: n, glow: "none", guidance: "recognise", bar: { en: `{${n}}?`, ro: `{${n}}?` } })),
       recap: { en: "you named all seven white keys", ro: "ai găsit toate cele șapte clape albe" } },
     { id: "L5S3", type: "play", tempo: 80, guidance: { default: "recognise", A: "show", B: "show" },
