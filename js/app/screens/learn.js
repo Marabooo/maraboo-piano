@@ -26,7 +26,8 @@ export function learnScreen(root, _p, { go }) {
     const l = item.l, state = item.c ? 'soon' : done(l) ? 'done' : l === nextL ? 'next' : 'ahead';
     const stone = h('button.stone3.' + state, { type: 'button', style: { left: pts[i].x + 'px', top: pts[i].y + 'px', '--lc': l ? NOTE_COLORS[l.colour] || 'var(--accent)' : 'var(--line)' },
       on: { click: () => (l ? openIntro(l, { go }) : overlay([h('p', t('stone.coming_soon_body', { n: LESSONS.length }))])) } },
-      h('span.disc', state === 'done' ? h('span', { html: ICONS.check }) : String(l ? l.number : item.c.number)),
+      // v2: finished lessons keep their number, with a small check badge in the corner
+      h('span.disc', String(l ? l.number : item.c.number), state === 'done' ? h('span.done-badge', { html: ICONS.check }) : null),
       h('span.st-title', tx(l ? l.title : item.c.title)),
       state === 'soon' ? h('span.muted.small', t('stone.coming_soon')) : null);
     if (state === 'next') nextEl = stone;
