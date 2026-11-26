@@ -385,11 +385,14 @@ export class FallingNotes extends Emitter {
     c.fillRect(0, hitY - 1, W, 3);
 
     // blocks
+    // v2 (Round 1, L12): while waiting, blocks stop exactly on the hit line (no sinking into the keys)
+    const pg = this.groups[this.next];
+    const vpos = pg && pg.state === 'pending' && this.pos > pg.beat ? pg.beat : this.pos;
     for (const g of this.groups) {
-      const yb = hitY - (g.beat - this.pos) * ppb;
+      const yb = hitY - (g.beat - vpos) * ppb;
       if (yb < -10) break; // further groups are above the lane
       for (const n of g.notes) {
-        const yTop = yb - n.dur * ppb + 3;
+        const yTop = yb - Math.max(n.dur * ppb, 22) + 3; // short notes stay visible (min ~22 px)
         if (yTop > H + 4) continue;
         this._drawBlock(c, n, g, dx, yTop, yb, hitY, ppb, now, ink);
       }
