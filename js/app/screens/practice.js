@@ -86,7 +86,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     el.classList.toggle('portrait', portrait);
     const insetB = safeBottom();
     const avail = H - 44 - insetB - (portrait ? 40 : 0);
-    const keyH = portrait ? clamp(Math.round(0.28 * avail), 120, 220) : clamp(Math.round(0.40 * avail), 120, 200);
+    const keyH = portrait ? clamp(Math.round(0.32 * avail), 136, 240) : clamp(Math.round(0.46 * avail), 136, 220); // v2: a bit taller (Round 1: hard to hit keys)
     kbWrap.style.height = keyH + insetB + 'px';
     el.classList.toggle('compact', avail - keyH < 96);
     fsBtn.style.display = document.fullscreenElement || matchMedia('(display-mode: standalone)').matches || navigator.standalone ? 'none' : '';

@@ -22,7 +22,7 @@ function shell(root, go, kind) {
   const kbEl = h('div'); const kbWrap = h('div.kb-wrap.mg-kb', kbEl);
   const el = h('div.screen.practice.mg', top, stage, kbWrap);
   root.append(el);
-  kbWrap.style.height = Math.max(120, Math.min(200, Math.round(innerHeight * 0.36))) + 'px';
+  kbWrap.style.height = Math.max(136, Math.min(220, Math.round(innerHeight * 0.42))) + 'px';
   const kb = new Keyboard(kbEl, { start: 'C4', whites: 7, labels: 'off', minKeyPx: 30 });
   const input = new InputHub({ audio }); input.attachKeyboard(kb);
   const card = (title, sub, label, onGo) => { const c = h('div.step-card.mg-card', h('p.card-text', title), sub ? h('p.muted.small', sub) : null, h('div.row.card-btns', h('button.btn.primary', { type: 'button', on: { click: () => { c.remove(); audio.unlock(); onGo(); } } }, label))); stage.append(c); };
