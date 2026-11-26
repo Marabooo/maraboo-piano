@@ -48,7 +48,7 @@ export function openIntro(lesson, { go }) {
     h('div.eyebrow', t('intro.eyebrow', { n: lesson.number, m: lesson.minutes || 3 })),
     h('h1', tx(lesson.title)),
     h('p', h('span.muted', t('intro.you_learn') + ': '), tx(lesson.newSkill)),
-    h('p', h('span.muted', t('intro.you_play') + ': '), tx(lesson.tune), ' ', h('button.icon-btn.small', { type: 'button', 'aria-label': 'Preview', on: { click: preview }, html: '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor"/></svg>' })),
+    // v2: "You'll play: …" removed (too much text, student request 26 Nov)
     mode ? h('p.muted', t('intro.playing_on', { mode: t(mode === 'mic' ? 'intro.mode_mic' : 'intro.mode_screen') }), ' · ',
       h('button.help-link', { type: 'button', on: { click: () => { o.close(); go(`mode/${lesson.id}?change=1`); } } }, t('intro.change'))) : null,
     ...btns,
