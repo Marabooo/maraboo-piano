@@ -1,7 +1,7 @@
 // Klang service worker: network-first for app files (testers always get the latest version when
 // online), cache fallback offline; cache-first for the immutable piano samples.
 // After adding files, add them to PRECACHE and bump VERSION.
-const VERSION = 'klang-v0.8.3';
+const VERSION = 'klang-v0.8.4';
 const PRECACHE = [
   './', './index.html', './manifest.webmanifest', './css/app.css', './css/keyboard.css',
   './js/main.js',
@@ -33,7 +33,8 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); return res; })));
     return;
   }
-  e.respondWith(fetch(req).then((res) => {
+  // always revalidate app files with the server (cheap 304s) so a new version shows on the next open
+  e.respondWith(fetch(req, { cache: 'no-cache' }).then((res) => {
     if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); }
     return res;
   }).catch(() => caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match('./index.html'))));

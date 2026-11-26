@@ -29,13 +29,13 @@ audio.on('unlocked', () => {});
 audio.setVolume(store.settings.volume);
 applyNoteColorVars();
 // Handy for the team and for the test-mode module (read-only use, please).
-window.klang = { audio, log, store, version: '0.8.3' };
+window.klang = { audio, log, store, version: '0.8.4' };
 startRouter(document.getElementById('app'));
 if (NS.mode) import('./testmode/testmode.js').then((m) => { window.klang.testmode = m.startTestMode(); });
 
 // Offline support (network-first, see sw.js). ?nosw disables it for debugging.
 if ('serviceWorker' in navigator && !location.search.includes('nosw')) {
-  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW registration failed', e)));
+  addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).catch((e) => console.warn('SW registration failed', e)));
 }
 
 
