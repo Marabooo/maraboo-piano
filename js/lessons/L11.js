@@ -29,5 +29,5 @@ export default {
     { id: "L11.chords", text: { en: "I can play {C}m, {A}♭, {F}m, {G}.", ro: "Pot cânta {C}m, {A}♭, {F}m, {G}." }, earnedIf: { stepDone: "L11S1" } },
     { id: "L11.song", text: { en: "I played Gangsta's Paradise with chords.", ro: "Am cântat Gangsta's Paradise cu acorduri." }, earnedIf: { stepDone: "L11S2" } },
   ],
-  next: null,
+  next: "L12",
 };

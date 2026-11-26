@@ -487,3 +487,4 @@ export const DA = {
 "Look for three black keys together.": "Kig efter tre sorte tangenter sammen.",
 "Both hands": "Begge hænder"
 };
+Object.assign(DA, {"Still Loving You": "Still Loving You", "{A}m, {G}, {F}, {E}": "{A}m, {G}, {F}, {E}", "Same shape, one key down each time.": "Samme form, én tangent ned hver gang.", "{A}m chord": "{A}m-akkord", "{E} chord": "{E}-akkord", "Chords: {A}m, {G}, {F}, {E}": "Akkorder: {A}m, {G}, {F}, {E}", "You played the chords of Still Loving You.": "Du spillede akkorderne til Still Loving You.", "Still Loving You (chords)": "Still Loving You (akkorder)", "I can play {A}m, {G}, {F}, {E}.": "Jeg kan spille {A}m, {G}, {F}, {E}.", "I played Still Loving You with chords.": "Jeg spillede Still Loving You med akkorder."}); // L12

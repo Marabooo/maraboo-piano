@@ -13,6 +13,7 @@ import L8 from './L8.js';
 import L9 from './L9.js';
 import L10 from './L10.js';
 import L11 from './L11.js';
+import L12 from './L12.js';
 
 /** Resolve { tune, bars: [a, b] } references into plain event arrays (notes, pads, app melody). */
 function resolve(spec, table) {
@@ -41,13 +42,13 @@ function prepare(lesson, number) {
     pad: resolve(s.pad, PADS),
     app: s.app ? { ...s.app, melody: resolve(s.app.melody, TUNES) } : undefined,
   }));
-  return { ...lesson, number, steps, section: lesson.section || ([3, 6, 7, 8, 9, 10, 11].includes(number) ? 'chords' : 'notes') };
+  return { ...lesson, number, steps, section: lesson.section || ([3, 6, 7, 8, 9, 10, 11, 12].includes(number) ? 'chords' : 'notes') };
 }
 
-export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11].map((l, i) => prepare(l, i + 1));
+export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L12].map((l, i) => prepare(l, i + 1));
 /** Planned lessons shown as "Coming soon" stones (02 §2). */
 export const COMING = [
-  { number: 12, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
+  { number: 13, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
 ];
 export { NOTE_HINT, PATTERN_HINT };
 export const lessonById = (id) => LESSONS.find((l) => l.id === id) || null;
