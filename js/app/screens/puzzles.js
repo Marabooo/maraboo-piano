@@ -12,8 +12,7 @@ export function puzzlesScreen(root, _p, { go }) {
   root.append(h('div.screen.scroll.puzzles', h('h1.tab-title', t('tab.puzzles')),
     h('div.pz-list',
       row('🧩', t('home.daily_title'), solved ? t('home.daily_done') : null, () => { log.event('daily_open', { solved, from: 'puzzles' }); go('game'); }, solved ? '' : '.glow'),
-      ...(window.KLANG_GAMES || []).map((g) => row(g.icon, t(g.title), null, () => go(g.route))),
-      row('🎹', t('pz.tiles'), t('stone.coming_soon'), null, '.soon'),
-      row('🎯', t('pz.findkey'), t('stone.coming_soon'), null, '.soon'))));
+      row('🎹', t('pz.tiles'), t('pz.tiles_sub'), () => go('tiles')),
+      row('🎯', t('pz.findkey'), t('pz.findkey_sub'), () => go('findkey')))));
   return null;
 }

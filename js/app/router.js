@@ -9,6 +9,7 @@ import { settingsScreen } from './screens/settings.js';
 import { gameScreen } from './screens/game.js';
 import { learnScreen } from './screens/learn.js';
 import { puzzlesScreen } from './screens/puzzles.js';
+import { tilesScreen, findKeyScreen } from './screens/minigames.js';
 import { tabBar, TAB_ROUTES } from './screens/tabs.js';
 import { updatePortraitHint } from './portrait.js';
 import { log } from '../engine/log.js';
@@ -24,6 +25,8 @@ const ROUTES = {
   game: gameScreen,
   learn: learnScreen,
   puzzles: puzzlesScreen,
+  tiles: tilesScreen,
+  findkey: findKeyScreen,
 };
 
 let root = null;
