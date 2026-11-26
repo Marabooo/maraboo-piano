@@ -70,6 +70,10 @@ function render() {
 export function startRouter(el) {
   root = el;
   addEventListener('hashchange', render);
-  if (!location.hash) history.replaceState(null, '', '#/home');
+  // v2: a fresh open always starts on Home (a saved link / home-screen icon can carry e.g. #/puzzles).
+  // A plain reload keeps the page; lesson and test links (?lesson=, ?test=) are handled before this.
+  const nav = performance.getEntriesByType?.('navigation')?.[0]?.type;
+  const keep = nav === 'reload' || /^#\/(play|done|lesson|mode)/.test(location.hash);
+  if (!location.hash || !keep) history.replaceState(null, '', '#/home');
   render();
 }
