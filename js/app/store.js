@@ -4,8 +4,8 @@
 const KEY = 'klang.state.v1';
 
 export const DEFAULT_SETTINGS = {
-  labels: 'letters',       // 'letters' | 'solfege' | 'off'  — default Letters for everyone (test task T2)
-  lastNaming: 'letters',   // naming used in text while labels are off
+  labels: 'solfege',       // 'letters' | 'solfege' | 'off'  — default Letters for everyone (test task T2)
+  lastNaming: 'solfege',   // naming used in text while labels are off
   practiceMode: null,      // null = ask at the first lesson start; then 'touch' | 'mic'
   waitMode: 'soft',        // 'soft' | 'strict' (01 §4.5; ?wait= overrides)
   hints: 'auto',           // 'auto' | 'ask'

@@ -2,11 +2,11 @@
 import { bars } from './shared.js';
 export default {
   id: "L1",
-  title:    { en: "Find {C} — your first tune", ro: "Găsește {C} — prima ta melodie" },
+  title:    { en: "Find {C}: your first tune", ro: "Găsește {C}: prima ta melodie" },
   newSkill: { en: "The two black keys: {C}, {D}, {E}", ro: "Cele două clape negre: {C}, {D}, {E}" },
   tune:     { en: "Frère Jacques (first line)", ro: "Frère Jacques (primul rând)" },
   minutes: 3, colour: "C", newNotes: ["C","D","E"],
-  range: { low: "C3", high: "C5" },        // 15 white keys; portrait shows C4–C5
+  range: { low: "C3", high: "C5" },       // 15 white keys; portrait shows C4–C5
   steps: [
     { id: "L1S1", type: "find",
       card: { en: "Find two black keys side by side. {C} is the white key just to their left.",
@@ -17,7 +17,7 @@ export default {
         { target: "C", glow: "none", guidance: "recognise", different: true,
           bar: { en: "Another {C}?", ro: "Mai găsești un {C}?" } },
         { target: "C", glow: "none", guidance: "recognise", different: true, ifVisible: 3,
-          bar: { en: "One more — a different one.", ro: "Încă unul — altul decât cele de până acum." } },
+          bar: { en: "One more, a different one.", ro: "Încă unul, altul decât cele de până acum." } },
       ],
       after: { en: "{C} repeats all along the piano.", ro: "{C} se repetă pe tot pianul." },
       recap: { en: "you found {C}", ro: "ai găsit {C}" } },
@@ -27,9 +27,9 @@ export default {
               ro: "{D} stă între cele două clape negre. {E} e chiar în dreapta lor." },
       prompts: [
         { target: "D", glow: "targets", guidance: "show",
-          bar: { en: "Tap {D} — between the two black keys.", ro: "Atinge {D} — între cele două clape negre." } },
+          bar: { en: "Tap {D}, between the two black keys.", ro: "Atinge {D}, între cele două clape negre." } },
         { target: "E", glow: "targets", guidance: "show",
-          bar: { en: "Tap {E} — just right of them.", ro: "Atinge {E} — chiar în dreapta lor." } },
+          bar: { en: "Tap {E}, just right of them.", ro: "Atinge {E}, chiar în dreapta lor." } },
         { target: "C", glow: "none", guidance: "recognise",
           bar: { en: "No lights now. Tap {C}.", ro: "Fără lumini acum. Atinge {C}." } },
         { target: "E", glow: "none", guidance: "recognise", bar: { en: "{E}?", ro: "{E}?" } },
@@ -50,24 +50,24 @@ export default {
       recap: { en: "you played the first line of Frère Jacques", ro: "ai cântat primul rând din Frère Jacques" } },
 
     { id: "L1S5", type: "play", tempo: 80, guidance: "recognise", record: true,
-      card: { en: "Again — this time the keys won't light up.", ro: "Încă o dată — de data asta clapele nu se mai aprind." },
+      card: { en: "Again, this time the keys won't light up.", ro: "Încă o dată, de data asta clapele nu se mai aprind." },
       bar:  { en: "Same tune, no lights.", ro: "Aceeași melodie, fără lumini." },
       phrase: { en: "the first line of Frère Jacques, without lights", ro: "primul rând din Frère Jacques, fără lumini" },
       notes: { tune: "frere", bars: [1, 2] }, pad: { tune: "frere", bars: [1, 2] } },
 
     { id: "L1S6", type: "recall", guidance: "recall", hideLabels: true,
-      card: { en: "Now from the note names only. The names on the keys are hidden — you know where they are.",
-              ro: "Acum doar după numele notelor. Numele de pe clape sunt ascunse — știi unde sunt." },
+      card: { en: "Now from the note names only. The names on the keys are hidden, you know where they are.",
+              ro: "Acum doar după numele notelor. Numele de pe clape sunt ascunse, știi unde sunt." },
       bar:  { en: "From the note names: play the line.", ro: "După numele notelor: cântă rândul." },
       phrase: { en: "Frère Jacques from the note names", ro: "Frère Jacques după numele notelor" },
-      notes: { tune: "frere", bars: [1, 2] } },   // shown as chips: C D E C · C D E C
+      notes: { tune: "frere", bars: [1, 2] } },  // shown as chips: C D E C · C D E C
   ],
   headline: { en: "You played the start of Frère Jacques.", ro: "Ai cântat începutul melodiei Frère Jacques." },
   song: { id: "frere", title: { en: "Frère Jacques (first line)", ro: "Frère Jacques (primul rând)" } },
   canNow: [
     { id: "L1.findC",
-      text:   { en: "I can find {C} anywhere on a piano — just left of the two black keys.",
-                ro: "Găsesc {C} oriunde pe pian — chiar în stânga celor două clape negre." },
+      text:   { en: "I can find {C} anywhere on a piano, just left of the two black keys.",
+                ro: "Găsesc {C} oriunde pe pian, chiar în stânga celor două clape negre." },
       earnedIf: { all: [ { prompt: "L1S1", n: "last", maxHint: 1, noWrong: true },
                          { prompt: "L1S2", n: 3, maxHint: 0, noWrong: true } ] },
       almost: { en: "finding {C} without help", ro: "să găsesc {C} fără ajutor" }, practise: "L1S1" },

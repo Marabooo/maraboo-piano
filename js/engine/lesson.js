@@ -197,7 +197,7 @@ export class LessonRunner extends Emitter {
     if (!L || level <= L.level) return;
     L.level = Math.min(4, level);
     this.log.event('hint', { lesson: this.lesson.id, stepId: this.step.id, level: L.level, why });
-    if (L.level >= 4) this.emit('skipnote', { show: true });
+    if (L.level >= 4) { /* v2: no Skip note button */ }
     else L.onLevel(L.level);
   }
   _ladderWrong(countIt = true) {
@@ -396,14 +396,14 @@ export class LessonRunner extends Emitter {
       held.add(m);
       const pr = step.prompts[p];
       const cands = candidates(pr);
-      const inAny = cands.some((c) => c.some((x) => (this.mic ? pitchClass(x) === pitchClass(m) : x === m)));
+      const inAny = cands.some((c) => c.some((x) => pitchClass(x) === pitchClass(m))); // v2: any octave / inversion
       if (!inAny) { this._wrong(m, null, { chord: true }); this._ladderWrong(); return; }
-      presses.set(this.mic ? pitchClass(m) : m, e.time);
+      presses.set(pitchClass(m), e.time);
       const now = e.time;
       const ok = cands.find((c) => c.every((x) => {
-        const k = this.mic ? pitchClass(x) : x;
+        const k = pitchClass(x);
         const tp = presses.get(k);
-        return tp != null && ((!this.mic && held.has(x)) || now - tp <= windowMs);
+        return tp != null && ([...held].some((hm) => pitchClass(hm) === k) || now - tp <= windowMs);
       }));
       clearTimeout(partialT);
       if (ok) {
@@ -416,7 +416,7 @@ export class LessonRunner extends Emitter {
       } else {
         partialT = this._later(() => {
           const c = cands[0];
-          const missing = c.filter((x) => !presses.has(this.mic ? pitchClass(x) : x));
+          const missing = c.filter((x) => !presses.has(pitchClass(x)));
           if (missing.length) {
             this.kb.setTargets(missing, { level: 'strong' });
             this.emit('tag', { midi: missing[0], text: t('hint.chord_add', { notes: missing.map((x) => this._name(x)).join(' + ') }), kind: 'hint', ms: 2500 });

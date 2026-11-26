@@ -171,7 +171,7 @@ p { margin: 0 0 10px; line-height: 1.45; }
 .find-progress i.on { background: var(--good); transform: scale(1.1); }
 .feedback {
   position: absolute; bottom: 8px; transform: translateX(-50%); z-index: 4; pointer-events: none;
-  background: var(--cream); color: var(--text); font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 12px;
+  background: var(--cream); color: var(--ink); font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 12px;
   max-width: 80%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   opacity: 0; transition: opacity .25s;
 }
@@ -216,7 +216,7 @@ textarea.summary { color-scheme: dark; width: 100%; min-height: 160px; border-ra
 .rotate-ic svg { width: 100%; height: 100%; animation: rot 2.4s ease-in-out infinite; }
 @keyframes rot { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
 @keyframes fade { from { opacity: 0; } }
-.toast { position: fixed; left: 50%; bottom: calc(var(--safe-b) + 16px); transform: translateX(-50%); z-index: 60; background: var(--cream); color: var(--text); padding: 10px 16px; border-radius: 14px; font-weight: 600; font-size: 14px; animation: fade .2s; max-width: 90vw; }
+.toast { position: fixed; left: 50%; bottom: calc(var(--safe-b) + 16px); transform: translateX(-50%); z-index: 60; background: var(--cream); color: var(--ink); padding: 10px 16px; border-radius: 14px; font-weight: 600; font-size: 14px; animation: fade .2s; max-width: 90vw; }
 
 /* ---------- responsive ---------- */
 /* landscape phones: compact vertical rhythm */
@@ -496,3 +496,35 @@ body.tm-bar-on #app { top: calc(44px + var(--safe-t)); }
 .town { padding: 8px 12px 6px; }
 .town-art svg { height: 48px; }
 @media (prefers-reduced-motion: reduce) { .daily-card { animation: none; } }
+
+/* ---------- v2 phase 1 (Round 1 feedback) ---------- */
+/* smaller sheets and step cards, less to scroll */
+.sheet { width: min(300px, calc(100% - 16px)); padding: 10px 12px; border-radius: 0 0 16px 16px; }
+.sheet h2 { font-size: 14px; margin: 0 0 6px; }
+.label-tiles { gap: 6px; }
+.label-tile { min-height: 44px; padding: 4px 6px; }
+.label-tile b { font-size: 14px; }
+.big-map { height: 40px; }
+.keys-pm { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
+.btn.pm { width: 64px; min-height: 44px; padding: 0; font-size: 26px; font-weight: 800; line-height: 1; }
+.pause-row { justify-content: space-between; flex-wrap: nowrap; }
+.pause-row .btn { flex: 1; }
+.step-card { max-width: 400px; padding: 10px 16px; border-radius: 16px; }
+.step-card .card-text { font-size: 15px; }
+.bar-btn .lv { font-size: 13px; white-space: nowrap; }
+/* rotate hint: once, gone on tap or on rotating */
+.rotate-tip { position: absolute; inset: 0; z-index: 20; display: grid; place-content: center; justify-items: center; gap: 14px; background: rgba(18,20,28,.78); color: var(--text); font-weight: 700; text-align: center; padding: 24px; }
+.rot-phone { width: 44px; height: 76px; border: 4px solid var(--cream); border-radius: 10px; animation: rot 2.2s ease-in-out infinite; }
+/* 3-stop tour */
+.tour { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.45); }
+.tour-on { position: relative; z-index: 71; box-shadow: 0 0 0 3px var(--focus) !important; border-radius: 12px; }
+.tour-bub { position: fixed; width: 240px; background: var(--cream); color: var(--ink); border-radius: 14px; padding: 10px 12px; box-shadow: var(--shadow); }
+.tour-bub::before { content: ''; position: absolute; top: -8px; left: calc(var(--ax, 120px) - 8px); border: 8px solid transparent; border-top: 0; border-bottom-color: var(--cream); }
+.tour-bub p { margin: 0 0 4px; font-weight: 700; font-size: 15px; }
+.tour-bub .muted { color: #6b6350; }
+/* lesson complete: title + choices first, cards below */
+.done-screen.v2 { align-items: center; }
+.done-top { min-height: calc(100% - 8px); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; width: min(560px, 100%); text-align: center; }
+.done-title { font-size: clamp(30px, 6vw, 44px); margin: 0; }
+.done-top .choice-row { width: 100%; margin-top: 0; }
+.done-cards { width: min(560px, 100%); padding-bottom: 24px; }

@@ -2,9 +2,9 @@
 import { bars } from './shared.js';
 export default {
   id: "L2",
-  title:    { en: "{F} and {G} — Ode to Joy", ro: "{F} și {G} — Oda bucuriei" },
-  newSkill: { en: "The three black keys: {F} and {G} — five notes under one hand",
-              ro: "Cele trei clape negre: {F} și {G} — cinci note sub o mână" },
+  title:    { en: "{F} and {G}: Ode to Joy", ro: "{F} și {G}: Oda bucuriei" },
+  newSkill: { en: "The three black keys: {F} and {G}, five notes under one hand",
+              ro: "Cele trei clape negre: {F} și {G}, cinci note sub o mână" },
   tune:     { en: "Ode to Joy", ro: "Oda bucuriei" },
   minutes: 4, colour: "F", newNotes: ["F","G"],
   range: { low: "C3", high: "C5" },
@@ -25,7 +25,7 @@ export default {
               ro: "{G} e clapa albă de după {F}. Apoi un mic amestec cu tot ce știi." },
       prompts: [
         { target: "G", glow: "targets", guidance: "show",
-          bar: { en: "Tap {G} — right after {F}.", ro: "Atinge {G} — imediat după {F}." } },
+          bar: { en: "Tap {G}, right after {F}.", ro: "Atinge {G}, imediat după {F}." } },
         { target: "E", glow: "none", guidance: "recognise", bar: { en: "No lights. {E}?", ro: "Fără lumini. {E}?" } },
         { target: "G", glow: "none", guidance: "recognise", bar: { en: "{G}?", ro: "{G}?" } },
         { target: "C", glow: "none", guidance: "recognise", bar: { en: "{C}?", ro: "{C}?" } },
@@ -42,8 +42,8 @@ export default {
       notes: { tune: "frere", bars: [1, 4] }, pad: { tune: "frere", bars: [1, 4] }, record: "song:frere" },
 
     { id: "L2S4", type: "listen", tempo: 80,
-      card: { en: "Ode to Joy by Beethoven — you may know it as the anthem of Europe.",
-              ro: "Oda bucuriei de Beethoven — poate o știi ca imnul Europei." },
+      card: { en: "Ode to Joy by Beethoven, you may know it as the anthem of Europe.",
+              ro: "Oda bucuriei de Beethoven, poate o știi ca imnul Europei." },
       bar:  { en: "Listen: Ode to Joy", ro: "Ascultă: Oda bucuriei" },
       notes: { tune: "ode", bars: [1, 4] }, pad: { tune: "ode", bars: [1, 4] } },
 
@@ -71,7 +71,7 @@ export default {
   songUpdate: { id: "frere", title: { en: "Frère Jacques (first half)", ro: "Frère Jacques (prima jumătate)" } },
   canNow: [
     { id: "L2.findF",
-      text: { en: "I can find {F} — just left of the three black keys.", ro: "Găsesc {F} — chiar în stânga celor trei clape negre." },
+      text: { en: "I can find {F}, just left of the three black keys.", ro: "Găsesc {F}, chiar în stânga celor trei clape negre." },
       earnedIf: { all: [ { prompt: "L2S1", n: 2, maxHint: 1, noWrong: true }, { prompt: "L2S2", n: 5, maxHint: 0, noWrong: true } ] },
       almost: { en: "finding {F} without help", ro: "să găsesc {F} fără ajutor" }, practise: "L2S1" },
     { id: "L2.five",

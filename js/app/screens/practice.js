@@ -1,5 +1,5 @@
 // Practice screen (01 §2.6–2.8, §3, §6, §7, §8). Also "free play" (no lesson).
-import { h, ICONS, toast } from '../ui.js';
+import { h, ICONS, toast, overlay } from '../ui.js';
 import { t, tx, noteName, markNote, naming } from '../i18n.js';
 import { rich, plain } from '../notemark.js';
 import { store } from '../store.js';
@@ -16,6 +16,8 @@ import { describe, whiteIndex, whiteToMidi, NOTE_COLORS } from '../../engine/not
 import { lessonById, NOTE_HINT, PATTERN_HINT } from '../../lessons/index.js';
 
 const KEY_PX = { bigger: 64, normal: 44, more: 44 };
+const KEY_STEPS = [80, 64, 52, 44, 36, 30]; // v2: − / + in the keys sheet (min key width, px)
+const keyStep = () => (Number.isInteger(store.settings.keyStep) ? store.settings.keyStep : 3);
 const query = () => new URLSearchParams(location.search);
 
 export function waitMode() { const q = query().get('wait'); return q === 'soft' || q === 'strict' ? q : store.settings.waitMode; }
@@ -31,7 +33,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   let peEl = null;
 
   // ---------- layout ----------
-  const pauseBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.pause'), title: t('top.pause'), html: free ? ICONS.back : pauseIcon() });
+  const pauseBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.pause'), title: t('top.pause'), html: ICONS.back }); // v2: back arrow (still pauses)
   const dots = h('div.dots', { role: 'img' });
   const coach = h('div.coach-slot', { 'aria-live': 'polite' });
   const skipNote = h('button.help-link', { type: 'button', style: { display: 'none' } }, t('top.skip'));
@@ -39,7 +41,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const hintBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.hint'), title: t('top.hint'), style: { display: S.hints === 'ask' && !free ? '' : 'none' }, html: bulbIcon() });
   const labelsBtn = h('button.bar-btn', { type: 'button', 'aria-label': t('top.labels', { mode: '' }) });
   const keysBtn = h('button.bar-btn.keys-btn', { type: 'button', 'aria-label': t('top.keys'), title: t('top.keys') }, h('canvas.mini-map', { width: 128, height: 40 }));
-  const fsBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.fullscreen'), title: t('top.fullscreen'), html: fsIcon(), style: { display: 'none' } });
+  const fsBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.fullscreen'), title: t('top.fullscreen'), html: fsIcon() });
   const chip = h('button.help-link', { type: 'button', style: { display: 'none' } }, t('sound.auto_chip'));
   const top = h('div.p-top', pauseBtn, free ? h('b.free-title', t('free.title')) : dots, coach, skipNote, chip, micPill, hintBtn, labelsBtn, keysBtn, fsBtn);
   const canvas = h('canvas.lane', { 'aria-hidden': 'true' });
@@ -54,7 +56,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   root.append(el);
 
   // ---------- engines ----------
-  const kb = new Keyboard(kbEl, { start: 'C3', whites: 15, labels: S.labels, minKeyPx: KEY_PX[S.keySize] || 44 });
+  const kb = new Keyboard(kbEl, { start: 'C3', whites: 15, labels: S.labels, minKeyPx: KEY_STEPS[keyStep()] });
   kb.root.dataset.last = S.lastNaming || 'letters';
   const fall = new FallingNotes(canvas, kb, { waitMode: waitMode(), labels: S.labels, lastNaming: naming() });
   const input = new InputHub({ audio });
@@ -86,7 +88,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     const keyH = portrait ? clamp(Math.round(0.28 * avail), 120, 220) : clamp(Math.round(0.40 * avail), 120, 200);
     kbWrap.style.height = keyH + insetB + 'px';
     el.classList.toggle('compact', avail - keyH < 96);
-    fsBtn.style.display = document.fullscreenEnabled && H < 340 && !document.fullscreenElement ? '' : 'none';
+    fsBtn.style.display = document.fullscreenElement || matchMedia('(display-mode: standalone)').matches || navigator.standalone ? 'none' : '';
     drawMap();
     kb._measure?.();
   };
@@ -94,17 +96,20 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   kb.on('rangechange', (r) => log.event('kb_range', { lo: r.lo, hi: r.hi, kw: Math.round(kb.kw) }));
   setTimeout(() => { const r = kb.visibleRange(); log.event('kb_range', { lo: r.lo, hi: r.hi, kw: Math.round(kb.kw) }); }, 600);
   layout();
-  if (innerHeight > innerWidth && matchMedia('(pointer: coarse)').matches && !sessionStorage.getItem('klang.rotTip')) {
-    sessionStorage.setItem('klang.rotTip', '1');
-    setTimeout(() => toast(t('rotate.tip'), 4000), 600);
-    log.event('rotate_tip');
+  if (innerHeight > innerWidth && matchMedia('(pointer: coarse)').matches && !store.settings.rotTipSeen) {
+    store.set('rotTipSeen', true); log.event('rotate_tip');
+    const tip = h('div.rotate-tip', h('div.rot-phone'), h('p', t('rotate.tip')));
+    const gone = () => { tip.remove(); removeEventListener('resize', onRot); };
+    const onRot = () => { if (innerWidth > innerHeight) gone(); };
+    tip.addEventListener('pointerdown', gone); addEventListener('resize', onRot);
+    el.append(tip);
   }
 
   // ---------- labels popover (01 §7.3) ----------
-  const labelText = () => ({ letters: 'C4', solfege: 'Do', off: '–' }[labelsHidden ? 'off' : S.labels]);
+  const labelText = () => ({ letters: 'C D E', solfege: 'Do Re Mi', off: t('labels.off_btn') }[labelsHidden ? 'off' : S.labels]);
   const refreshLabelsBtn = () => {
     labelsBtn.innerHTML = '';
-    labelsBtn.append(h('span.aa', 'Aa'), h('span.lv', labelText()));
+    labelsBtn.append(h('span.lv', labelText()));
     labelsBtn.setAttribute('aria-label', t('top.labels', { mode: t('labels.' + S.labels) }));
   };
   refreshLabelsBtn();
@@ -118,7 +123,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     runner?.labelsChanged(mode);
     log.event('labels_change', { mode, from, step: runner?.step?.id });
   };
-  labelsBtn.addEventListener('click', () => openSheet('labels'));
+  labelsBtn.addEventListener('click', () => (sheetOpen?.kind === 'labels' ? closeSheet() : openSheet('labels')));
 
   // ---------- sheets over the lane (never over the keys) ----------
   let sheetOpen = null;
@@ -128,36 +133,20 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     const close = () => closeSheet();
     let body;
     if (kind === 'labels') {
-      const tiles = ['letters', 'solfege', 'off'].map((m) => h('button.label-tile', {
+      const tiles = ['solfege', 'letters', 'off'].map((m) => h('button.label-tile', {
         type: 'button', 'aria-pressed': String(S.labels === m && !labelsHidden),
-        on: { click: () => { applyLabels(m); tiles.forEach((x, i) => x.setAttribute('aria-pressed', String(['letters', 'solfege', 'off'][i] === m))); clearTimeout(autoClose); autoClose = setTimeout(close, 2000); } },
-      }, h('span.prev', m === 'letters' ? 'C4 D E F G' : m === 'solfege' ? 'Do Re Mi Fa Sol' : t('labels.off_preview')), h('b', t('labels.' + m))));
+        on: { click: () => { applyLabels(m); tiles.forEach((x, i) => x.setAttribute('aria-pressed', String(['solfege', 'letters', 'off'][i] === m))); clearTimeout(autoClose); autoClose = setTimeout(close, 2000); } },
+      }, h('b', { solfege: 'Do Re Mi', letters: 'C D E', off: t('labels.off_btn') }[m])));
       let autoClose;
-      body = [h('h2', t('labels.title')), h('div.label-tiles', tiles), labelsHidden ? h('p.muted', t('recall.hidden_caption')) : null];
+      body = [h('div.label-tiles', tiles)];
     } else if (kind === 'keys') {
       const map = h('canvas.big-map', { width: 576, height: 64 });
-      const size = h('div.seg', ['bigger', 'normal', 'more'].map((k) => h('button', { type: 'button', 'aria-pressed': String(S.keySize === k), on: { click: (e) => { store.set('keySize', k); [...e.target.parentNode.children].forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))); applyKeySize(); log.event('size_change', { size: k }); drawBigMap(map); } } }, t('keys.' + k))));
+      const step = (d) => { const i = Math.max(0, Math.min(KEY_STEPS.length - 1, keyStep() + d)); store.set('keyStep', i); applyKeySize(); log.event('size_change', { step: i }); setTimeout(() => drawBigMap(map), 420); };
       bindMap(map);
-      body = [h('div.keys-head', h('h2', t('keys.title')), h('span.muted.small', t('keys.map_hint') + (free ? '' : ' ' + t('keys.follow')))), map,
-        h('div.keys-controls',
-          h('div.row', h('button.btn', { type: 'button', on: { click: () => { kb.shiftOctave(-1); log.event('keys_change', { how: 'lower' }); setTimeout(() => drawBigMap(map), 420); } } }, t('keys.lower')),
-            h('button.btn', { type: 'button', on: { click: () => { kb.shiftOctave(1); log.event('keys_change', { how: 'higher' }); setTimeout(() => drawBigMap(map), 420); } } }, t('keys.higher'))),
-          h('div.row', h('span.muted.small', t('keys.size')), size))];
+      body = [map, h('div.keys-pm', h('button.btn.pm', { type: 'button', 'aria-label': t('keys.fewer'), on: { click: () => step(-1) } }, '−'), h('button.btn.pm', { type: 'button', 'aria-label': t('keys.more_n'), on: { click: () => step(1) } }, '+'))];
       setTimeout(() => drawBigMap(map), 0);
     } else if (kind === 'pause') {
-      const sp = h('div.seg', [[0.75, 'speed.slower'], [1, 'speed.normal']].map(([v, k]) => h('button', { type: 'button', 'aria-pressed': String(speed === v), on: { click: (e) => { speed = v; if (runner) runner.o.speed = v; fall.setSpeed(v); [...e.target.parentNode.children].forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))); log.event('speed_change', { speed: v }); } } }, t(k))));
-      const hi = h('div.seg', [['auto', 'hints.auto'], ['ask', 'hints.ask']].map(([v, k]) => h('button', { type: 'button', 'aria-pressed': String(S.hints === v), on: { click: (e) => { store.set('hints', v); if (runner) runner.o.hints = v; hintBtn.style.display = v === 'ask' ? '' : 'none'; [...e.target.parentNode.children].forEach((b) => b.setAttribute('aria-pressed', String(b === e.target))); log.event('hints_change', { hints: v }); } } }, t(k))));
-      body = [
-        h('button.btn.primary.big.wide', { type: 'button', on: { click: close } }, t('pause.resume')),
-        h('div.sheet-rows',
-          h('button.row-btn', { type: 'button', on: { click: () => { closeSheet(); runner?.action('hear'); } } }, t('pause.hear')),
-          h('button.row-btn', { type: 'button', on: { click: () => { closeSheet(false); restartStep(); } } }, t('pause.restart_step')),
-          h('div.row-line', h('span', t('pause.speed')), sp),
-          h('div.row-line', h('span', t('pause.hints')), hi),
-          h('button.row-btn', { type: 'button', on: { click: () => soundHelp() } }, t('pause.sound_help')),
-          h('button.row-btn', { type: 'button', on: { click: leave } }, t('pause.leave')),
-        ),
-      ];
+      body = [h('div.row.pause-row', h('button.btn.big', { type: 'button', on: { click: leave } }, t('pause.leave_short')), h('button.btn.primary.big', { type: 'button', on: { click: close } }, t('pause.resume')))];
     }
     const sheet = h('div.sheet.sheet-' + kind, { role: 'dialog' }, body);
     const scrim = h('div.sheet-scrim', { on: { click: close } });
@@ -170,15 +159,19 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     sheetOpen.el.remove(); sheetOpen.scrim.remove(); sheetOpen = null;
     if (resume) { runner?.resume(); if (free && fall.phrase) fall.resume(); }
   }
-  keysBtn.addEventListener('click', () => openSheet('keys'));
+  keysBtn.addEventListener('click', () => (sheetOpen?.kind === 'keys' ? closeSheet() : openSheet('keys')));
   pauseBtn.addEventListener('click', () => (free ? go('home') : openSheet('pause')));
-  fsBtn.addEventListener('click', async () => { try { await document.documentElement.requestFullscreen({ navigationUI: 'hide' }); await screen.orientation?.lock?.('landscape'); } catch { /* ignore */ } layout(); });
+  fsBtn.addEventListener('click', async () => {
+    log.event('fullscreen', { api: !!document.fullscreenEnabled });
+    if (document.fullscreenEnabled) { try { await document.documentElement.requestFullscreen({ navigationUI: 'hide' }); await screen.orientation?.lock?.('landscape'); } catch { /* ignore */ } layout(); return; }
+    const o = overlay([h('p', t('fs.ios')), h('button.btn.primary', { type: 'button', on: { click: () => o.close() } }, t('common.ok'))]); // iPhone: no fullscreen API
+  });
   chip.addEventListener('click', () => soundHelp());
 
   const applyKeySize = () => {
-    kb.opts.minKeyPx = KEY_PX[S.keySize] || 44;
-    if (S.keySize === 'more') { const n = kb.maxWhites(); const c = kb.view.start + kb.view.count / 2; kb.setRange(whiteToMidi(kb.base + Math.max(0, Math.round(c - n / 2))), n); }
-    else if (kb._requested) kb.setRange(kb._requested.start, Math.max(kb._requested.whites, 8), { focus: kb._requested.focus });
+    kb.opts.minKeyPx = KEY_STEPS[keyStep()];
+    const n = kb.maxWhites(); const c = kb.view.start + kb.view.count / 2;
+    kb.setRange(whiteToMidi(kb.base + Math.max(0, Math.round(c - n / 2))), n);
   };
 
   // ---------- piano map (01 §6.2) ----------
@@ -271,6 +264,27 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const keyCenter = (m) => { const r = kb.root.getBoundingClientRect(); const sp = kb.keySpan(m); return { x: r.left + sp.x + sp.w / 2, y: r.top + r.height * (sp.black ? 0.35 : 0.82) }; };
   if (window.klang) window.klang.practice = { kb, fall, input, keyCenter, get runner() { return runner; } };
 
+  // ---------- short tour (v2): after the first finished lesson, once ----------
+  const anyDone = Object.values(store.state.progress || {}).some((p) => p?.completed);
+  if (anyDone && !store.settings.tourSeen) setTimeout(() => {
+    store.set('tourSeen', true); log.event('tour_start');
+    const stops = [[labelsBtn, t('tour.names')], [keysBtn, t('tour.keys')], [fsBtn, t('tour.fs')]].filter(([b]) => b.offsetParent);
+    let i = 0;
+    const layer = h('div.tour', { on: { click: () => { i++; i < stops.length ? show() : (layer.remove(), log.event('tour_done')); } } });
+    const show = () => {
+      layer.innerHTML = '';
+      const [btn, txt] = stops[i]; const r = btn.getBoundingClientRect();
+      btn.classList.add('tour-on'); stops.forEach(([b], k) => k !== i && b.classList.remove('tour-on'));
+      const bub = h('div.tour-bub', h('p', txt), h('span.muted.small', `${i + 1}/${stops.length} · ${t('tour.tap')}`));
+      bub.style.top = r.bottom + 10 + 'px';
+      bub.style.left = Math.max(8, Math.min(innerWidth - 248, r.left + r.width / 2 - 120)) + 'px';
+      bub.style.setProperty('--ax', Math.round(r.left + r.width / 2 - Math.max(8, Math.min(innerWidth - 248, r.left + r.width / 2 - 120))) + 'px');
+      layer.append(bub);
+    };
+    const end = new MutationObserver(() => { if (!layer.isConnected) { stops.forEach(([b]) => b.classList.remove('tour-on')); end.disconnect(); } });
+    document.body.append(layer); end.observe(document.body, { childList: true }); show();
+  }, 700);
+
   // ---------- free play ----------
   if (free) {
     log.event('freeplay_start');
@@ -302,8 +316,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     runner.on('card', (c) => showCard(c, (id) => runner.action(id)));
     runner.on('cardhide', hideCard);
     runner.on('bar', setBar);
-    runner.on('skipnote', ({ show }) => { skipNote.style.display = show ? '' : 'none'; });
-    runner.on('tag', showTag);
+    runner.on('skipnote', () => {}); // v2: no Skip note
+    runner.on('tag', (x) => { if (x.kind !== 'wrong') showTag(x); }); // v2: no wrong-note bubbles (key still greys)
     runner.on('tagsclear', clearTags);
     runner.on('lane', ({ show }) => canvas.classList.toggle('on', show));
     runner.on('demo', ({ on }) => { el.classList.toggle('demo', on); skipNote.style.display = on ? '' : 'none'; skipNote.textContent = on ? t('demo.skip') : t('top.skip'); });

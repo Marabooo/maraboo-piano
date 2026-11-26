@@ -2,14 +2,14 @@
 import { bars } from './shared.js';
 export default {
   id: "L4",
-  title:    { en: "Jingle Bells — a whole chorus", ro: "Jingle Bells — tot refrenul" },
+  title:    { en: "Jingle Bells: a whole chorus", ro: "Jingle Bells: tot refrenul" },
   newSkill: { en: "A whole 16-bar chorus: repeated notes, long and short notes", ro: "Un refren întreg de 16 măsuri: note repetate, note lungi și scurte" },
   tune:     { en: "Jingle Bells (chorus)", ro: "Jingle Bells (refrenul)" },
   minutes: 4, colour: "G", newNotes: [],
   range: { low: "C3", high: "C5" },
   steps: [
     { id: "L4S1", type: "listen", tempo: 90,
-      card: { en: "Jingle Bells. Lots of repeated notes — each block is its own tap.", ro: "Jingle Bells. Multe note repetate — fiecare bloc e o atingere separată." },
+      card: { en: "Jingle Bells. Lots of repeated notes, each block is its own tap.", ro: "Jingle Bells. Multe note repetate, fiecare bloc e o atingere separată." },
       bar:  { en: "Listen: Jingle Bells", ro: "Ascultă: Jingle Bells" },
       notes: { tune: "jingle", bars: [1, 4] }, pad: { tune: "jingle", bars: [1, 4] } },
     { id: "L4S2", type: "play", tempo: 90, guidance: "remind",
@@ -28,7 +28,7 @@ export default {
       phrase: { en: "the second half", ro: "a doua jumătate" },
       notes: { tune: "jingle", bars: [9, 16] }, pad: { tune: "jingle", bars: [9, 16] } },
     { id: "L4S5", type: "play", tempo: 90, guidance: "recognise", record: true,
-      choice: "labelsOff",   // step card shows two extra buttons: "Names off" / "Keep names"
+      choice: "labelsOff",  // step card shows two extra buttons: "Names off" / "Keep names"
       card: { en: "The whole chorus. Want to try it with the key names off? You can turn them back on any time.",
               ro: "Tot refrenul. Încerci fără numele clapelor? Le poți reaprinde oricând." },
       bar:  { en: "The whole chorus.", ro: "Tot refrenul." },
@@ -44,7 +44,7 @@ export default {
       fallback: { en: "I played the whole Jingle Bells chorus, with a few hints.", ro: "Am cântat tot refrenul din Jingle Bells, cu câteva indicii." },
       fallbackIf: { stepDone: "L4S5" }, almost: { en: "playing it with fewer hints", ro: "s-o cânt cu mai puține indicii" }, practise: "L4S5" },
     { id: "L4.repeat",
-      text: { en: "I can play repeated notes — lift, then tap again.", ro: "Pot cânta note repetate — ridic degetul, apoi ating din nou." },
+      text: { en: "I can play repeated notes, lift, then tap again.", ro: "Pot cânta note repetate, ridic degetul, apoi ating din nou." },
       earnedIf: { stepDone: "L4S2" } },
     { id: "L4.noNames", optional: true,
       text: { en: "I played it without key names.", ro: "Am cântat-o fără numele clapelor." },

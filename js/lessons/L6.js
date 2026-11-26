@@ -25,7 +25,7 @@ export default {
     { id: "L6S3", type: "listen", tempo: 80,
       card: { en: "Listen to how the chords sit under Ode to Joy.", ro: "Ascultă cum se potrivesc acordurile sub Oda bucuriei." },
       bar:  { en: "Listen: Ode to Joy with chords", ro: "Ascultă: Oda bucuriei cu acorduri" },
-      notes: "L6S4.notes", app: { melody: { tune: "ode", bars: [1, 4] } } },     // demo plays chords (bars 1–4) + melody
+      notes: "L6S4.notes", app: { melody: { tune: "ode", bars: [1, 4] } } },    // demo plays chords (bars 1–4) + melody
     { id: "L6S4", type: "play", tempo: 80, follow: "steady", guidance: { default: "recognise", first: 2 }, record: "withApp",
       card: { en: "Klang plays the tune. You play the chords: {C} or {G}, once per bar.", ro: "Klang cântă melodia. Tu cânți acordurile: {C} sau {G}, o dată pe măsură." },
       bar:  { en: "Play {C} or {G} when it lands.", ro: "Cântă {C} sau {G} când ajunge jos." },
@@ -34,11 +34,11 @@ export default {
                [CH.C4[0],CH.C4[1],16,4], [CH.G3[0],CH.G3[1],20,4], [CH.C4[0],CH.C4[1],24,4], [CH.G3[0],CH.G3[1],28,2], [CH.C4[0],CH.C4[1],30,2] ],
       app: { melody: { tune: "ode", bars: [1, 8] } } },
   ],
-  headline: { en: "Two chords — and you accompanied Ode to Joy.", ro: "Două acorduri — și ai acompaniat Oda bucuriei." },
+  headline: { en: "Two chords, and you accompanied Ode to Joy.", ro: "Două acorduri, și ai acompaniat Oda bucuriei." },
   song: { id: "ode-chords", title: { en: "Ode to Joy, with your chords", ro: "Oda bucuriei, cu acordurile tale" } },
   canNow: [
     { id: "L6.chordG",
-      text: { en: "I can play a {G} chord — the same shape, starting on {G}.", ro: "Pot cânta acordul {G} — aceeași formă, pornind de la {G}." },
+      text: { en: "I can play a {G} chord, the same shape, starting on {G}.", ro: "Pot cânta acordul {G}, aceeași formă, pornind de la {G}." },
       earnedIf: { prompt: "L6S1", n: 4, maxHint: 1 },
       almost: { en: "finding {G} chord without help", ro: "să găsesc acordul {G} fără ajutor" }, practise: "L6S1" },
     { id: "L6.switch",

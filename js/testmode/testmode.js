@@ -84,7 +84,7 @@ export function startTestMode() {
   addEventListener('klang:lang', (e) => { const to = e.detail?.to; if (!S || !to || to === S.lang) return; S.langSwitches = (S.langSwitches || 0) + 1; ev('lang_switch', { to, via: e.detail.via }); lang = S.lang = to; save(); });
   lang = S.lang;
   store.set('lang', lang === 'ro' ? 'ro' : 'en');
-  store.set('labels', store.settings.labels === 'solfege' && S.phase !== 'app' && !S.tasks.T2 ? 'letters' : store.settings.labels);
+  store.set('labels', store.settings.labels === 'letters' && S.phase !== 'app' && !S.tasks.T2 ? 'solfege' : store.settings.labels);
   if (NS.mode === 'study') {
     const variant = AB_ENABLED ? (STUDY_VARIANTS[S.code] || 'a') : 'a';
     S.variant = variant;

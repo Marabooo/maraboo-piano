@@ -28,31 +28,24 @@ export function completeScreen(root, { id }, { go, takePassed }) {
 
   const chips = (letters) => h('div.note-chips', letters.map((l) => h('span.note-chip', { style: { background: NOTE_COLORS[l] } }, noteName(l))));
   const song = sum.song?.title || '';
-  const rec = sum.recording || store.songs[sum.song?.id]?.recordings?.[0];
 
   const cards = h('div.can-cards', sum.cards.map((c, i) => c.kind === 'can'
     ? h('div.can-card', { style: { '--lc': NOTE_COLORS[lesson.colour] || 'var(--accent)', animationDelay: `${i * 80}ms` } }, h('span.ck', { html: ICONS.check }), h('span', cardText(lesson, c)))
     : h('div.can-card.almost', { style: { animationDelay: `${i * 80}ms` } }, h('span', cardText(lesson, c)),
       c.practise ? h('button.help-link', { type: 'button', on: { click: () => { log.event('done_choice', { lesson: id, choice: 'practise', step: c.practise, ms: Math.round(performance.now() - shownAt), variant }); const idx = lesson.steps.findIndex((s) => s.id === c.practise); go(`play/${id}?resume=0&step=${idx + 1}`); } } }, t('done.practise')) : null)));
 
-  const hear = rec ? h('div.hear', h('button.btn', { type: 'button', on: { click: () => { log.event('hear_mine', { lesson: id }); playBack(rec); } } }, t('done.hear_mine', { song })), h('span.muted.small', t('done.hear_caption'))) : null;
-
-  const nextBtn = h('button.btn.big.choice', { type: 'button', disabled: !nxt, on: { click: () => choose('next') } },
-    h('b', t('done.next')), h('span.sub', nxt ? tx(nxt.title) : t('done.next_none')));
+  const nextBtn = h('button.btn.big.choice', { type: 'button', disabled: !nxt, on: { click: () => choose('next') } }, h('b', t('done.next')));
   const doneBtn = h('button.btn.big.choice', { type: 'button', on: { click: () => choose('done') } }, h('b', t('done.today')));
 
-  // Variant B (testing/06 §6.3): same layout, sound, animation and buttons; only the skill text is replaced.
-  const left = variant === 'B'
-    ? h('div', h('div.eyebrow', t('done.eyebrow', { n: lesson.number })), h('h1', t('done.neutral')))
-    : h('div', h('div.eyebrow', t('done.eyebrow', { n: lesson.number })), h('h1', sum.headline || tx(lesson.headline)),
-      h('h2.small-h', t('done.can_now')), cards);
-  // v2 (Round 1: "what do I do now?", one participant stuck reading everything): the found-without-help
-  // chips, the "added to…" line and the button sub-texts were removed; the "I can" cards stay (RQ).
-  const right = h('div.done-right',
-    hear,
-    h('div.choice-row.two', doneBtn, nextBtn),
-    h('button.help-link', { type: 'button', on: { click: () => choose('again') } }, song ? t('done.again', { song }) : t('intro.play_again')));
-  root.append(h('div.screen.scroll.done-screen', h('div.done-grid', left, right)));
+  // v2 (Round 1): big centred "Lesson N done", then Done for now (left) / Next lesson (right), Play again;
+  // the "I can" cards (RQ) sit below and are reached by scrolling. "Hear your…" removed (pressed out of
+  // curiosity only once, and it sat first). Variant B: same, without the cards.
+  root.append(h('div.screen.scroll.done-screen.v2',
+    h('div.done-top',
+      h('h1.done-title', t('done.eyebrow', { n: lesson.number })),
+      h('div.choice-row.two', doneBtn, nextBtn),
+      h('button.help-link', { type: 'button', on: { click: () => choose('again') } }, song ? t('done.again', { song }) : t('intro.play_again'))),
+    variant === 'B' ? null : h('div.done-cards', h('h2.small-h', t('done.can_now')), cards)));
 
   // soft rising arpeggio of the lesson's notes (−12 dB), 120 ms apart
   setTimeout(() => {

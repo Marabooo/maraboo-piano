@@ -244,7 +244,8 @@ export class FallingNotes extends Emitter {
     const o = this.opts;
     const g = this.groups[this.next];
     if (!g || g.state !== 'pending') return { matched: false };
-    const same = (a, b) => (o.matchPitchClass ? pitchClass(a) === pitchClass(b) : a === b);
+    // v2: a chord counts in any octave / inversion (G B D = B D G = D G B); single notes stay exact
+    const same = (a, b) => (o.matchPitchClass || g.notes.length > 1 ? pitchClass(a) === pitchClass(b) : a === b);
     const visible = g.beat - this.pos <= this.visibleBeats;
     const member = g.midis.find((m) => same(m, midi));
     if (!visible || member == null) {

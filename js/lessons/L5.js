@@ -2,7 +2,7 @@
 import { bars } from './shared.js';
 export default {
   id: "L5",
-  title:    { en: "{A} and {B} — all seven notes", ro: "{A} și {B} — toate cele șapte note" },
+  title:    { en: "{A} and {B}: all seven notes", ro: "{A} și {B}: toate cele șapte note" },
   newSkill: { en: "{A}, {B}, the whole white-key pattern and the {C} major scale", ro: "{A}, {B}, tot modelul clapelor albe și gama {C} major" },
   tune:     { en: "Twinkle, Twinkle, Little Star", ro: "Twinkle, Twinkle, Little Star" },
   minutes: 4, colour: "A", newNotes: ["A","B"],
@@ -12,8 +12,8 @@ export default {
       card: { en: "Back to the three black keys. {A} sits between the last two. {B} is just right of them.",
               ro: "Înapoi la cele trei clape negre. {A} stă între ultimele două. {B} e chiar în dreapta lor." },
       prompts: [
-        { target: "A", glow: "targets", guidance: "show", bar: { en: "Tap {A} — between the last two black keys.", ro: "Atinge {A} — între ultimele două clape negre." } },
-        { target: "B", glow: "targets", guidance: "show", bar: { en: "Tap {B} — just right of the three black keys.", ro: "Atinge {B} — chiar în dreapta celor trei clape negre." } },
+        { target: "A", glow: "targets", guidance: "show", bar: { en: "Tap {A}, between the last two black keys.", ro: "Atinge {A}, între ultimele două clape negre." } },
+        { target: "B", glow: "targets", guidance: "show", bar: { en: "Tap {B}, just right of the three black keys.", ro: "Atinge {B}, chiar în dreapta celor trei clape negre." } },
         { target: "A", glow: "none", guidance: "recognise", different: true, bar: { en: "Another {A}?", ro: "Mai găsești un {A}?" } },
       ],
       recap: { en: "you found {A} and {B}", ro: "ai găsit {A} și {B}" } },
@@ -25,9 +25,9 @@ export default {
       card: { en: "The {C} major scale: every white key from {C} to {C}, up and back down.", ro: "Gama {C} major: toate clapele albe de la {C} la {C}, în sus și înapoi." },
       bar:  { en: "Scale: up to {C}, then back down.", ro: "Gama: în sus până la {C}, apoi înapoi." },
       phrase: { en: "the {C} major scale", ro: "gama {C} major" },
-      notes: { tune: "scaleC", bars: [1, 4] } },          // no pad
+      notes: { tune: "scaleC", bars: [1, 4] } },         // no pad
     { id: "L5S4", type: "listen", tempo: 80,
-      card: { en: "Twinkle, Twinkle — it jumps from {C} up to {G}.", ro: "Twinkle, Twinkle — sare de la {C} până la {G}." },
+      card: { en: "Twinkle, Twinkle, it jumps from {C} up to {G}.", ro: "Twinkle, Twinkle, sare de la {C} până la {G}." },
       bar:  { en: "Listen: Twinkle, Twinkle", ro: "Ascultă: Twinkle, Twinkle" },
       notes: { tune: "twinkle", bars: [1, 4] }, pad: { tune: "twinkle", bars: [1, 4] } },
     { id: "L5S5", type: "play", tempo: 80, guidance: { default: "recognise", A: "show" },
@@ -41,7 +41,7 @@ export default {
       phrase: { en: "all of Twinkle, Twinkle", ro: "tot Twinkle, Twinkle" },
       notes: { tune: "twinkle", bars: [1, 12] }, pad: { tune: "twinkle", bars: [1, 12] } },
   ],
-  headline: { en: "You know every white key now — and you played Twinkle, Twinkle.", ro: "Acum știi toate clapele albe — și ai cântat Twinkle, Twinkle." },
+  headline: { en: "You know every white key now, and you played Twinkle, Twinkle.", ro: "Acum știi toate clapele albe, și ai cântat Twinkle, Twinkle." },
   song: { id: "twinkle", title: { en: "Twinkle, Twinkle, Little Star", ro: "Twinkle, Twinkle, Little Star" } },
   canNow: [
     { id: "L5.seven",
