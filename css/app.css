@@ -618,3 +618,9 @@ body { background: radial-gradient(120% 60% at 0% 0%, rgba(183,155,255,.10), tra
 .learn .chord-w { text-decoration: none; }
 .pz-check { color: var(--good); font-weight: 800; font-size: 22px; }
 .stone3 .disc { box-sizing: border-box; }
+/* v2.3: note pills like the reference chip (tinted background, coloured text) on dark surfaces;
+   solid pill with dark text on light surfaces. "chord" underline only inside lessons. */
+.nn { background: color-mix(in srgb, var(--nn) 24%, transparent) !important; color: var(--nn) !important; box-shadow: none !important; }
+.tag .nn, .tour-bub .nn, .play-btn .nn, .hero .nn, .step-card.light .nn { background: var(--nn) !important; color: var(--ink) !important; box-shadow: 0 0 0 1.5px rgba(20,22,31,.35) !important; }
+.chord-w { text-decoration: none; }
+.practice .chord-w { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }

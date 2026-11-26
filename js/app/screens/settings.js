@@ -88,7 +88,7 @@ function repertoire(root, go) {
     h('div.set-h', t('rep.songs')),
     songs.length ? h('div.set-group', songs.map(([sid, s]) => h('div.set-row', h('div.lbl', h('b', songTitle(LESSONS.find((l) => l.id === s.lessonId), s.title)), h('span', new Date(s.learnedAt).toLocaleDateString())),
       s.recordings?.[0] ? h('button.btn', { type: 'button', on: { click: () => { log.event('rep_play', { song: sid, what: 'hear' }); playBack(s.recordings[0]); } } }, t('rep.hear')) : null,
-      h('button.btn', { type: 'button', on: { click: () => { log.event('rep_play', { song: sid, what: 'play' }); go(`play/${s.lessonId}?resume=0`); } } }, t('rep.play'))))) : h('p.muted', t('rep.empty')),
+      null))) : h('p.muted', t('rep.empty')), // v2: "Play again" removed (student request)
     skills.length ? h('div.set-h', t('rep.skills')) : null,
     skills.length ? h('div.set-group', skills.filter((c) => c.kind === 'can').map((c) => h('div.set-row', h('div.lbl', h('b', cardText(c.lesson, c))))),
       skills.filter((c) => c.kind === 'almost').map((c) => h('div.set-row', h('div.lbl', h('span', cardText(c.lesson, c)))))) : null,
