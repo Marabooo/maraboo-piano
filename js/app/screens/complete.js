@@ -68,4 +68,5 @@ export function playBack(rec) {
     audio.playNote(n.midi, dur, { when: t, velocity: 0.75 });
     prev = n;
   }
+  return Math.max(0, t - audio.now()) + 1.5; // seconds until the last note has rung out
 }

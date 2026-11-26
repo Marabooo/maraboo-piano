@@ -87,11 +87,30 @@ function repertoire(root, go) {
     h('div.topbar', h('button.icon-btn', { type: 'button', 'aria-label': t('common.back'), html: ICONS.back, on: { click: () => go('home') } }), h('h2', t('rep.title'))),
     h('div.set-h', t('rep.songs')),
     songs.length ? h('div.set-group', songs.map(([sid, s]) => h('div.set-row', h('div.lbl', h('b', songTitle(LESSONS.find((l) => l.id === s.lessonId), s.title)), h('span', new Date(s.learnedAt).toLocaleDateString())),
-      s.recordings?.[0] ? h('button.btn.play-round', { type: 'button', 'aria-label': t('rep.hear'), title: t('rep.hear'), html: ICONS.play, on: { click: () => { log.event('rep_play', { song: sid, what: 'hear' }); playBack(s.recordings[0]); } } }) : null,
+      s.recordings?.[0] ? playToggle(sid, s.recordings[0]) : null,
       null))) : h('p.muted', t('rep.empty')), // v2: "Play again" removed (student request)
     skills.length ? h('div.set-h', t('rep.skills')) : null,
     skills.length ? h('div.set-group', skills.filter((c) => c.kind === 'can').map((c) => h('div.set-row', h('div.lbl', h('b', cardText(c.lesson, c))))),
       skills.filter((c) => c.kind === 'almost').map((c) => h('div.set-row', h('div.lbl', h('span', cardText(c.lesson, c)))))) : null,
   )));
-  return null;
+  return { destroy() { if (playing) { audio.allOff(); playing._reset(); } } }; // stop the song when leaving
+}
+
+// v2: play / stop toggle for a saved song (student: there was no way to stop it)
+const STOP = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/></svg>';
+let playing = null;
+function playToggle(sid, rec) {
+  const b = h('button.btn.play-round', { type: 'button', 'aria-label': t('rep.hear'), title: t('rep.hear'), html: ICONS.play });
+  const reset = () => { clearTimeout(b._t); b.innerHTML = ICONS.play; b.classList.remove('on'); if (playing === b) playing = null; };
+  b.addEventListener('click', () => {
+    const wasMe = playing === b;
+    if (playing) { audio.allOff(); playing._reset(); }
+    if (wasMe) { log.event('rep_play', { song: sid, what: 'stop' }); return; }
+    log.event('rep_play', { song: sid, what: 'hear' });
+    const secs = playBack(rec);
+    playing = b; b.innerHTML = STOP; b.classList.add('on');
+    b._t = setTimeout(reset, (secs || 10) * 1000);
+  });
+  b._reset = reset;
+  return b;
 }
