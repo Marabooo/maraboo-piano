@@ -10,7 +10,7 @@ export function gameScreen(root, params, { go }) {
   const game = mountDailyGame(root, {
     audio, store, log, lang: lang(),
     lessonDone: (n) => !!store.lessonProgress('L' + n)?.completed,
-    onExit: () => go('home'),
+    onExit: () => go('puzzles'), // v2: back goes to the Puzzles page
     // Jingle Bells → Lesson 4 (built). Unbuilt lessons fall back to the path.
     onGoToLesson: ({ lesson }) => (lessonById('L' + lesson) ? go('home', { data: { openLesson: 'L' + lesson } }) : go('home')),
   });

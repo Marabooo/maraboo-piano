@@ -422,7 +422,7 @@ export class LessonRunner extends Emitter {
           const c = cands[0];
           const missing = c.filter((x) => !presses.has(pitchClass(x)));
           if (missing.length) {
-            this.kb.setTargets(missing, { level: 'strong' });
+            this.kb.setTargets(c, { level: 'strong' }); // v2: all chord keys stay lit until the chord is played
             this.emit('tag', { midi: missing[0], text: t('hint.chord_add', { notes: missing.map((x) => this._name(x)).join(' + ') }), kind: 'hint', ms: 2500 });
           }
         }, 2000);

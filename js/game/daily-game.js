@@ -396,26 +396,11 @@ export function mountDailyGame(container, opts = {}) {
     const n = P.tune.lesson;
     const known = lessonDone(n);
     const days = P.practice ? null : getDays(now());
-    result.innerHTML = `
-      <h2 class="kg-solved-title">${t('daily.solved')}</h2>
-      <button class="kg-tune-line" type="button">${ICON.music}<span>${t('daily.tune', { tune: tuneName })}</span></button>
-      <button class="kg-btn kg-primary kg-lesson" type="button">${t(known ? 'daily.tune_known' : 'daily.tune_new', { n })}</button>
-      ${P.practice ? '' : `
-        ${days?.todayCounted ? `<p class="kg-chip">${t('days.today_counted')}</p>` : ''}
-        <button class="kg-btn kg-share" type="button">${ICON.share}<span>${t('daily.share')}</span></button>
-        <p class="kg-copied" role="status" aria-live="polite"></p>
-        <p class="kg-muted">${t('daily.tomorrow')}</p>`}
-      <button class="kg-btn kg-practice" type="button">${t('daily.practice')}</button>
-      <p class="kg-muted kg-small">${t('daily.practice_note')}</p>`;
+    // v2 (Round 1): the long result box confused players; just one way back to the Puzzles page
+    result.innerHTML = `<button class="kg-btn kg-primary kg-done-back" type="button">${t('daily.back')}</button>`;
     result.hidden = false;
-    result.querySelector('.kg-tune-line').addEventListener('click', () => { ev('game_tune_replay', { n: P.n, practice: P.practice }); playTune(); });
-    result.querySelector('.kg-lesson').addEventListener('click', () => {
-      ev('game_tune_link', { n: P.n, practice: P.practice, lesson: n, known });
-      stopTune(); onGoToLesson({ lesson: n, tune: P.tune.id, known });
-    });
-    result.querySelector('.kg-share')?.addEventListener('click', share);
-    result.querySelector('.kg-practice').addEventListener('click', () => { ev('game_practice_start', {}); startPuzzle({ practice: true }); });
-    if (fresh) result.querySelector('.kg-solved-title').focus?.();
+    result.querySelector('.kg-done-back').addEventListener('click', () => { ev('game_exit', { n: P?.n, practice: P?.practice, solved: true, via: 'result' }); stopTune(); onExit(); });
+    if (fresh) result.querySelector('.kg-done-back').focus?.();
     layout();
   }
 

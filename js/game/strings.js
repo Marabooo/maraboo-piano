@@ -6,6 +6,7 @@ export const GAME_STRINGS = {
   'daily.title': ['Note sort', 'Sortează notele'],
   'daily.number': ['#{n} · {date}', '#{n} · {date}'],
   'daily.how': ['Tap a tube, then tap where to pour. Sort each colour into its own tube.', 'Atinge o eprubetă, apoi locul unde torni. Adună fiecare culoare în eprubeta ei.'],
+  'daily.back': ['Back to puzzles', 'Înapoi la puzzle-uri'],
   'daily.undo': ['Undo', 'Anulează'],
   'daily.restart': ['Start over', 'De la capăt'],
   'daily.no_moves': ['No moves left. Undo or start over, no rush.', 'Nu mai sunt mutări. Anulează sau ia de la capăt, fără grabă.'],
