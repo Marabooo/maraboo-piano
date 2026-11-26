@@ -9,10 +9,10 @@ import { loadDays } from '../../game/streak.js';
 export function puzzlesScreen(root, _p, { go }) {
   const solved = !!loadDays()?.days?.[days.get().today]?.puzzle;
   const row = (ic, title, sub, onClick, cls = '', best = null) => h('button.pz-row' + cls, { type: 'button', disabled: !onClick, on: onClick ? { click: onClick } : {} },
-    h('span.pz-ic', ic), h('span.pz-txt', h('b', title), sub ? h('span', sub) : null), best ? h('span.pz-best', '🏆 ' + best) : null, h('span.pz-go', onClick ? '›' : ''));
+    h('span.pz-ic', ic), h('span.pz-txt', h('b', title), sub ? h('span', sub) : null), best === true ? h('span.pz-check', '✓') : best ? h('span.pz-best', '🏆 ' + best) : null, h('span.pz-go', onClick ? '›' : ''));
   root.append(h('div.screen.scroll.puzzles', h('h1.tab-title', t('tab.puzzles')),
     h('div.pz-list',
-      row('🧩', t('home.daily_title'), solved ? t('home.daily_done') : null, () => { log.event('daily_open', { solved, from: 'puzzles' }); go('game'); }, solved ? '' : '.glow'),
+      row('🧩', t('home.daily_title'), null, () => { log.event('daily_open', { solved, from: 'puzzles' }); go('game'); }, solved ? '' : '.glow', solved || null),
       row('🎹', t('pz.tiles'), t('pz.tiles_sub'), () => go('tiles'), '', store.settings.best_tiles),
       row('🎯', t('pz.findkey'), t('pz.findkey_sub'), () => go('findkey'), '', store.settings.best_findkey))));
   return null;

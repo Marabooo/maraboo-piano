@@ -611,3 +611,10 @@ body { background: radial-gradient(120% 60% at 0% 0%, rgba(183,155,255,.10), tra
 .play-btn .nn { background: var(--nn); color: var(--ink); box-shadow: 0 0 0 1.5px rgba(20,22,31,.45); }
 .pz-best { color: var(--focus); font-weight: 800; font-size: 14px; white-space: nowrap; }
 .mg-best { color: var(--focus); font-weight: 800; font-size: 14px; }
+/* v2.2 learn map + daily check */
+.stone3 .disc > span { display: grid; place-items: center; width: 100%; height: 100%; }
+.stone3 .disc svg { display: block; margin: 0; }
+.stone3.done .disc { border: 3px solid color-mix(in srgb, var(--lc) 62%, #000); box-shadow: 0 6px 0 rgba(0,0,0,.35); }
+.learn .chord-w { text-decoration: none; }
+.pz-check { color: var(--good); font-weight: 800; font-size: 22px; }
+.stone3 .disc { box-sizing: border-box; }
