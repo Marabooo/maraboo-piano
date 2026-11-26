@@ -52,7 +52,9 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const bigEl = h('div.find-big', { 'aria-hidden': 'true' });
   const stage = h('div.stage', canvas, bigEl, chipsRow, tags, cardLayer, sheetLayer);
   const kbEl = h('div');
-  const kbWrap = h('div.kb-wrap', kbEl);
+  // v2: grab handle above the keys; drag up/down to set the keyboard height (saved per phone + orientation)
+  const kbHandle = h('div.kb-handle', { role: 'separator', 'aria-label': t('kb.handle'), title: t('kb.handle') }, h('i'));
+  const kbWrap = h('div.kb-wrap', kbHandle, kbEl);
   const el = h('div.screen.practice', top, stage, kbWrap);
   root.append(el);
 
@@ -86,7 +88,10 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     el.classList.toggle('portrait', portrait);
     const insetB = safeBottom();
     const avail = H - 44 - insetB - (portrait ? 40 : 0);
-    const keyH = portrait ? clamp(Math.round(0.32 * avail), 136, 240) : clamp(Math.round(0.42 * avail), 124, 210); // v2: a bit taller (Round 1: hard to hit keys)
+    const autoH = portrait ? clamp(Math.round(0.32 * avail), 136, 240) : clamp(Math.round(0.42 * avail), 124, 210);
+    const saved = store.settings[portrait ? 'keyHp' : 'keyHl'];
+    const keyH = saved ? clamp(saved, 96, Math.max(96, avail - 90)) : autoH; // always leave room for falling blocks
+    maxKeyH = Math.max(96, avail - 90); curKeyH = keyH; isPortrait = portrait;
     kbWrap.style.height = keyH + insetB + 'px';
     el.classList.toggle('compact', avail - keyH < 96);
     fsBtn.style.display = document.fullscreenElement || matchMedia('(display-mode: standalone)').matches || navigator.standalone ? 'none' : '';
@@ -94,6 +99,15 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     kb._measure?.();
   };
   addEventListener('resize', layout);
+  let maxKeyH = 240, curKeyH = 140, isPortrait = false;
+  kbHandle.addEventListener('pointerdown', (e) => {
+    e.preventDefault(); try { kbHandle.setPointerCapture(e.pointerId); } catch { /* */ } kbHandle.classList.add("drag");
+    const y0 = e.clientY, h0 = curKeyH;
+    const move = (ev) => { store.set(isPortrait ? 'keyHp' : 'keyHl', clamp(Math.round(h0 - (ev.clientY - y0)), 96, maxKeyH)); layout(); };
+    const up = () => { kbHandle.classList.remove('drag'); kbHandle.removeEventListener('pointermove', move); log.event('kb_height', { h: curKeyH, portrait: isPortrait }); };
+    kbHandle.addEventListener('pointermove', move); kbHandle.addEventListener('pointerup', up, { once: true }); kbHandle.addEventListener('pointercancel', up, { once: true });
+  });
+  kbHandle.addEventListener('dblclick', () => { store.set(isPortrait ? 'keyHp' : 'keyHl', null); layout(); }); // double tap = automatic height
   kb.on('rangechange', (r) => log.event('kb_range', { lo: r.lo, hi: r.hi, kw: Math.round(kb.kw) }));
   setTimeout(() => { const r = kb.visibleRange(); log.event('kb_range', { lo: r.lo, hi: r.hi, kw: Math.round(kb.kw) }); }, 600);
   layout();
@@ -269,7 +283,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const anyDone = Object.values(store.state.progress || {}).some((p) => p?.completed);
   if (anyDone && !store.settings.tourSeen) setTimeout(() => {
     store.set('tourSeen', true); log.event('tour_start');
-    const stops = [[labelsBtn, t('tour.names')], [keysBtn, t('tour.keys')], [fsBtn, t('tour.fs')]].filter(([b]) => b.offsetParent);
+    const stops = [[labelsBtn, t('tour.names')], [keysBtn, t('tour.keys')], [kbHandle, t('tour.handle')], [fsBtn, t('tour.fs')]].filter(([b]) => b.offsetParent);
     let i = 0;
     const layer = h('div.tour', { on: { click: () => { i++; i < stops.length ? show() : (layer.remove(), log.event('tour_done')); } } });
     const show = () => {

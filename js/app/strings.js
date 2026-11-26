@@ -3,6 +3,8 @@
 // Note-name tokens {C} {D} … render in the current naming system (see noteText in i18n.js).
 
 export const STRINGS = {
+  'kb.handle': ['Drag to make the keys taller or shorter', 'Trage ca să faci clapele mai înalte sau mai scurte'],
+  'tour.handle': ['Drag this up or down to make the keys taller.', 'Trage asta în sus sau în jos ca să faci clapele mai înalte.'],
   'mg.best_row': ['Best: {n}', 'Record: {n}'],
   'tab.home': ['Home', 'Acasă'],
   'tab.puzzles': ['Puzzles', 'Puzzle-uri'],
