@@ -356,7 +356,8 @@ export class LessonRunner extends Emitter {
 
   // ---------- chord-find ----------
   _step_chord_find(step) {
-    this._lessonRange();
+    // v2: show the keys the chords actually use (lesson range could start too low on a phone)
+    this._stepRange(step.prompts.flatMap((p) => p.target[1]));
     this.emit('lane', { show: false });
     const st = this._st();
     const t = this.o.t;
@@ -383,6 +384,7 @@ export class LessonRunner extends Emitter {
       }
       const pr = step.prompts[p];
       this.emit('bar', { text: this.mic ? t('mic.chord_line', { notes: pr.target[1].map((m) => this._name(m)).join(', ') }) : this.o.tx(pr.bar), kind: 'step' });
+      this.kb.ensureVisible?.(pr.target[1]);
       if (pr.glow === 'targets') this.kb.setTargets(pr.target[1], { level: 'soft' });
       this._ladderStart('find', (lvl) => {
         const c = candidates(pr)[0] || pr.target[1];

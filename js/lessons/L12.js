@@ -16,12 +16,14 @@ export default {
       card: { en: "Same shape, one key down each time.", ro: "Aceeași formă, câte o clapă mai jos de fiecare dată." },
       prompts: order.map((k) => ({ target: C[k], glow: "targets", guidance: "show", bar: { en: C[k][2] + " chord", ro: "Acordul " + C[k][2] } })),
       recap: { en: "you found the four chords", ro: "ai găsit cele patru acorduri" } },
-    { id: "L12S2", type: "play", tempo: 66, follow: "steady", guidance: { default: "recognise", first: 4 }, record: "withApp",
-      card: { en: "Klang plays the bass. You play the four chords, twice.", ro: "Klang cântă basul. Tu cânți cele patru acorduri, de două ori." },
+    { id: "L12S2", type: "play", tempo: 60, follow: "steady", guidance: { default: "recognise", first: 4 }, record: "withApp",
+      card: { en: "Klang plays along. You play the four chords, twice.", ro: "Klang cântă cu tine. Tu cânți cele patru acorduri, de două ori." },
       bar:  { en: "Chords: {A}m, {G}, {F}, {E}", ro: "Acorduri: {A}m, {G}, {F}, {E}" },
       phrase: { en: "Still Loving You", ro: "Still Loving You" },
       notes: [0, 1, 2, 3, 4, 5, 6, 7].map((i) => at(order[i % 4], i * 4, 4)),
-      app: { melody: [0, 1, 2, 3, 4, 5, 6, 7].flatMap((i) => [[bass[i % 4][0], bass[i % 4][1], i * 4, 2], [bass[i % 4][0], bass[i % 4][1], i * 4 + 2, 2]]) } },
+      // Klang: bass + a picked broken-chord pattern an octave above your chord (the intro's feel, not the solo)
+      app: { melody: [0, 1, 2, 3, 4, 5, 6, 7].flatMap((i) => { const ch = C[order[i % 4]][1].map((m) => m + 12); const pat = [ch[0], ch[1], ch[2], ch[0] + 12, ch[2], ch[1], ch[2], ch[0] + 12];
+        return [[bass[i % 4][0], bass[i % 4][1], i * 4, 4], ...pat.map((m, k) => ['', m, i * 4 + k * 0.5, 0.5])]; }) } },
   ],
   headline: { en: "You played the chords of Still Loving You.", ro: "Ai cântat acordurile din Still Loving You." },
   song: { id: "still-loving-you", title: { en: "Still Loving You (chords)", ro: "Still Loving You (acorduri)" } },
