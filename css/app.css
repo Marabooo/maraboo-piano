@@ -631,3 +631,4 @@ body { background: radial-gradient(120% 60% at 0% 0%, rgba(183,155,255,.10), tra
 .rot-arrow { font-size: 34px; color: var(--focus); line-height: 1; }
 .rotate-ic svg { animation: none !important; transform: rotate(-90deg); }
 .stone.next .disc::after { animation: none !important; }
+.lang-choices { grid-template-columns: 1fr !important; }

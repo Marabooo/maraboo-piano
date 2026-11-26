@@ -52,7 +52,7 @@ export function settingsScreen(root, { query }, { go }) {
       row(t('settings.backing'), toggle('backing')),
       row(t('settings.test_sound'), h('button.btn', { type: 'button', on: { click: () => { audio.unlock(); const t0 = audio.now() + 0.05; [60, 64, 67].forEach((m, i) => audio.playNote(m, 0.6, { when: t0 + i * 0.25 })); } } }, '▶')),
       row(t('sound.title'), h('button.btn', { type: 'button', on: { click: () => soundHelp() } }, t('pause.sound_help'))),
-      row(t('settings.language'), segmented([{ value: 'en', label: 'English' }, { value: 'ro', label: 'Română' }], lang(), (v) => { go('settings', { replace: true }); setLang(v, 'settings'); })),
+      row(t('settings.language'), segmented([{ value: 'en', label: 'English' }, { value: 'ro', label: 'Română' }, { value: 'da', label: 'Dansk' }], lang(), (v) => { go('settings', { replace: true }); setLang(v, 'settings'); })),
     ),
     h('button.set-h.link', { type: 'button', on: { click: () => { testing.style.display = testing.style.display ? '' : 'none'; } } }, t('settings.testing') + ' ▾'),
     testing,

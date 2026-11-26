@@ -14,7 +14,7 @@
 // with pointer capture and multi-touch.
 
 import { Emitter } from './emitter.js';
-import { describe, isBlack, toMidi, whiteIndex, whiteToMidi } from './notes.js';
+import { describe, isBlack, toMidi, whiteIndex, whiteToMidi, shownLetter } from './notes.js';
 
 // Black key offsets from the white-key boundary (in white-key widths), like a real keyboard.
 const BLACK_OFFSET = { 1: -0.1, 3: 0.1, 6: -0.12, 8: 0, 10: 0.12 };
@@ -83,7 +83,7 @@ export class Keyboard extends Emitter {
       }
       const showLbl = !d.sharp || this.opts.blackLabels;
       el.innerHTML = showLbl
-        ? `<span class="lbl lbl-letters"><b>${d.letter}${d.sharp ? '♯' : ''}</b>${d.letter === 'C' && !d.sharp ? `<small>${d.octave}</small>` : ''}</span>` +
+        ? `<span class="lbl lbl-letters"><b>${shownLetter(d.letter)}${d.sharp ? '♯' : ''}</b>${d.letter === 'C' && !d.sharp ? `<small>${d.octave}</small>` : ''}</span>` +
           `<span class="lbl lbl-solfege"><b>${d.solfege}</b></span>`
         : '';
       if (m === 60 && this.opts.markMiddleC) el.classList.add('middle-c');

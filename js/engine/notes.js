@@ -67,10 +67,12 @@ export function describe(midi) {
 }
 
 /** Text label for a note in a label mode: 'letters' | 'solfege' | 'off'. */
+/** Letter as shown to the user: Danish calls B "H" (v2, 26 Nov). */
+export const shownLetter = (l) => (l === 'B' && globalThis.document?.documentElement?.lang === 'da' ? 'H' : l);
 export function labelFor(midi, mode, { withOctave = false } = {}) {
   const d = describe(midi);
   if (mode === 'solfege') return d.solfege;
-  if (mode === 'letters') return d.letter + (d.sharp ? '♯' : '') + (withOctave ? d.octave : '');
+  if (mode === 'letters') return shownLetter(d.letter) + (d.sharp ? '♯' : '') + (withOctave ? d.octave : '');
   return '';
 }
 

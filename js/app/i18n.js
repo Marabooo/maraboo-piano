@@ -6,6 +6,8 @@ import { STRINGS } from './strings.js';
 import { describe, pitchClass } from '../engine/notes.js';
 import { store } from './store.js';
 import { wrapNote } from './notemark.js';
+import { DA } from './da.js';
+import { shownLetter } from '../engine/notes.js';
 import { log } from '../engine/log.js';
 
 const LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -13,7 +15,7 @@ const SOLF = { C: 'Do', D: 'Re', E: 'Mi', F: 'Fa', G: 'Sol', A: 'La', B: 'Si' };
 
 export function lang() {
   const q = new URLSearchParams(location.search).get('lang');
-  if (q === 'en' || q === 'ro') return q;
+  if (q === 'en' || q === 'ro' || q === 'da') return q;
   if (store.settings.lang) return store.settings.lang;
   // Student decision (25 Nov): English by default for everyone; Romanian via Settings or ?lang=ro.
   return 'en';
@@ -22,7 +24,7 @@ export function lang() {
 /** Switch UI language (home flag button or Settings). Test mode hears 'klang:lang' and records the
  *  switch; a ?lang= in the address would override the choice, so it is removed before reloading. */
 export function setLang(l, from = 'settings') {
-  if (l !== 'en' && l !== 'ro') return;
+  if (l !== 'en' && l !== 'ro' && l !== 'da') return;
   const prev = lang();
   window.dispatchEvent(new CustomEvent('klang:lang', { detail: { to: l, from: prev, via: from } }));
   log.event('lang_change', { to: l, from: prev, via: from });
@@ -43,9 +45,9 @@ export function naming() {
 export function noteName(x, mode = naming()) {
   if (typeof x === 'number') {
     const d = describe(x);
-    return mode === 'solfege' ? d.solfege : d.letter + (d.sharp ? '♯' : '');
+    return mode === 'solfege' ? d.solfege : shownLetter(d.letter) + (d.sharp ? '♯' : '');
   }
-  return mode === 'solfege' ? (SOLF[x[0]] || x) + x.slice(1) : x;
+  return mode === 'solfege' ? (SOLF[x[0]] || x) + x.slice(1) : shownLetter(x[0]) + x.slice(1);
 }
 
 /** Note name wrapped in highlight markers (see notemark.js); use for names shown in UI text. */
@@ -67,17 +69,20 @@ export function fill(str, vars = {}) {
 export function t(id, vars) {
   const e = STRINGS[id];
   if (!e) return id;
-  return fill(lang() === 'ro' ? e[1] || e[0] : e[0], vars);
+  const L = lang();
+  return fill(L === 'ro' ? e[1] || e[0] : L === 'da' ? DA[e[0]] ?? e[0] : e[0], vars);
 }
 
 /** Lesson text object {en, ro} → string. */
 export function tx(obj, vars) {
   if (obj == null) return '';
   if (typeof obj === 'string') return fill(obj, vars);
-  return fill(obj[lang()] || obj.en || '', vars);
+  const L = lang();
+  return fill(obj[L] || (L === 'da' && DA[obj.en]) || obj.en || '', vars);
 }
 
 export { pitchClass };
+if (globalThis.document) document.documentElement.lang = lang(); // drives Danish H for B
 
 /** Text of a saved "I can" / "Almost" card in the CURRENT language. Cards are saved with the text of
  *  the language used at completion; rebuild it from the lesson by card id (fallback: saved text). */

@@ -1,3 +1,4 @@
+import { DA } from '../app/da.js';
 // Daily game strings, EN + RO. Copied from design/01_interaction_spec.md §12.8 (designer-owned).
 // Lines marked "engineer-added" are not in the spec deck (screen-reader labels and tune names) —
 // designer to review.
@@ -42,7 +43,7 @@ export function makeT(lang) {
   const i = lang === 'ro' ? 1 : 0;
   return (id, vars = {}) => {
     const e = GAME_STRINGS[id];
-    const s = e ? (e[i] || e[0]) : id;
+    const s = e ? (lang === 'da' ? DA[e[0]] ?? e[0] : e[i] || e[0]) : id;
     return s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
   };
 }

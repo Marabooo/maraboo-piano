@@ -57,7 +57,7 @@ export function homeScreen(root, { query }, { go, takePassed }) {
   function openLang() {
     log.event('lang_open', { from: 'home' });
     const o = overlay([h('h2', t('settings.language')),
-      h('div.lang-choices', ['en', 'ro'].map((l) => h('button.lang-choice', { type: 'button', 'aria-pressed': String(lang() === l), on: { click: () => { o.close(); if (l !== lang()) setLang(l, 'home'); } } },
+      h('div.lang-choices', ['en', 'ro', 'da'].map((l) => h('button.lang-choice', { type: 'button', 'aria-pressed': String(lang() === l), on: { click: () => { o.close(); if (l !== lang()) setLang(l, 'home'); } } },
         h('span.flag-dot', { html: FLAGS[l] }), h('b', LANG_NAME[l]))))]);
   }
   function soon() {
@@ -109,9 +109,10 @@ function townSvg(n, total) {
   return d;
 }
 
-const LANG_NAME = { en: 'English', ro: 'Română' };
+const LANG_NAME = { en: 'English', ro: 'Română', da: 'Dansk' };
 // Inline SVG flags (emoji flags don't render on Windows). Sliced to fill the round button.
 const FLAGS = {
   en: '<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><clipPath id="fl-uk"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#fl-uk)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>',
+  da: '<svg viewBox="0 0 37 28" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="37" height="28" fill="#C8102E"/><rect x="12" width="4" height="28" fill="#fff"/><rect y="12" width="37" height="4" fill="#fff"/></svg>',
   ro: '<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="1" height="2" fill="#002B7F"/><rect x="1" width="1" height="2" fill="#FCD116"/><rect x="2" width="1" height="2" fill="#CE1126"/></svg>',
 };
