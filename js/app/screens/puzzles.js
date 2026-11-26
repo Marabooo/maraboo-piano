@@ -13,7 +13,7 @@ export function puzzlesScreen(root, _p, { go }) {
   root.append(h('div.screen.scroll.puzzles', h('h1.tab-title', t('tab.puzzles')),
     h('div.pz-list',
       row('🧩', t('home.daily_title'), null, () => { log.event('daily_open', { solved, from: 'puzzles' }); go('game'); }, solved ? '' : '.glow', solved || null),
-      row('🎹', t('pz.tiles'), t('pz.tiles_sub'), () => go('tiles'), '', store.settings.best_tiles),
-      row('🎯', t('pz.findkey'), t('pz.findkey_sub'), () => go('findkey'), '', store.settings.best_findkey))));
+      row('🎯', t('pz.findkey'), t('pz.findkey_sub'), () => go('findkey'), '', store.settings.best_findkey),
+      row('🎹', t('pz.tiles'), t('pz.tiles_sub'), () => go('tiles'), '', store.settings.best_tiles))));
   return null;
 }
