@@ -1,35 +1,48 @@
-// v2 (26 Nov, student request): Still Loving You (Scorpions): the intro/solo loop, played as Am G F E
-// (same falling pattern as the original, moved to white keys). Klang plays the bass; no vocal melody.
-const C = { Am: [["A3","C4","E4"],[57,60,64],"{A}m"], G: [["G3","B3","D4"],[55,59,62],"{G}"], F: [["F3","A3","C4"],[53,57,60],"{F}"], E: [["E3","G♯3","B3"],[52,56,59],"{E}"] };
-const order = ["Am", "G", "F", "E"];
-const at = (k, b, d) => [C[k][0], C[k][1], b, d];
-const bass = [["A2",45],["G2",43],["F2",41],["E2",40]];
+// v2 (26 Nov, student request): Still Loving You (Scorpions), intro, transcribed from the student's tutorial
+// video (falling-notes video; yellow = right hand, blue = left hand). Key G minor, video tempo ≈ 90 bpm;
+// here slower. Unit = one eighth note (½ beat). Phone can't do both hands: first you play the left hand
+// while Klang plays the right; then you learn the right hand while Klang plays the left.
+import { describe } from '../engine/notes.js';
+const ev = (m, u, d) => [describe(m).name, m, u / 2, d / 2];          // eighth-note units → beats
+// left hand: D3 F3 Eb3 Eb3 D3 (one 32-eighth loop), twice
+const LH1 = [[50, 0, 4], [53, 4, 4], [51, 8, 8], [51, 16, 8], [50, 24, 8]];
+const LH = [...LH1, ...LH1.map(([m, u, d]) => [m, u + 32, d])].map(([m, u, d]) => ev(m, u, d));
+// right hand: loop 1 and loop 2 (as read from the video, frame by frame)
+const RH1 = [[70,1,1],[67,2,1],[62,3,2],[70,5,1],[67,6,1],[62,7,2],[70,9,1],[67,10,1],[62,11,1],[73,12,1],[72,13,1],[70,14,1],[67,15,1],
+             [70,18,1],[67,19,1],[62,20,2],[58,22,2],[57,24,2],[69,26,1],[66,27,1],[60,28,2],[57,30,2]];
+const RH2 = [[70,33,1],[67,34,1],[62,35,2],[70,37,1],[67,38,1],[62,39,2],[70,41,1],[67,42,1],[62,43,1],[73,44,1],[72,45,1],[70,46,1],[67,47,1],
+             [58,48,2],[70,50,1],[67,51,1],[62,52,2],[58,54,2],[57,56,2],[69,58,1],[66,59,1],[60,60,4]];
+const RH = [...RH1, ...RH2].map(([m, u, d]) => ev(m, u, d));
+const half = (arr, endBeat) => arr.filter((e) => e[2] < endBeat);
 export default {
   id: "L12",
   title:    { en: "Still Loving You", ro: "Still Loving You" },
-  newSkill: { en: "{A}m, {G}, {F}, {E}", ro: "{A}m, {G}, {F}, {E}" },
-  tune:     { en: "Still Loving You", ro: "Still Loving You" },
-  minutes: 3, colour: "F", newNotes: [],
-  range: { low: "D3", high: "G4" },
+  newSkill: { en: "Left hand, then the solo", ro: "Mâna stângă, apoi solo-ul" },
+  tune:     { en: "Still Loving You (intro)", ro: "Still Loving You (intro)" },
+  minutes: 4, colour: "F", newNotes: [],
+  range: { low: "D3", high: "D5" },
   steps: [
-    { id: "L12S1", type: "chord-find",
-      card: { en: "Same shape, one key down each time.", ro: "Aceeași formă, câte o clapă mai jos de fiecare dată." },
-      prompts: order.map((k) => ({ target: C[k], glow: "targets", guidance: "show", bar: { en: C[k][2] + " chord", ro: "Acordul " + C[k][2] } })),
-      recap: { en: "you found the four chords", ro: "ai găsit cele patru acorduri" } },
-    { id: "L12S2", type: "play", tempo: 60, follow: "steady", guidance: { default: "recognise", first: 4 }, record: "withApp",
-      card: { en: "Klang plays along. You play the four chords, twice.", ro: "Klang cântă cu tine. Tu cânți cele patru acorduri, de două ori." },
-      bar:  { en: "Chords: {A}m, {G}, {F}, {E}", ro: "Acorduri: {A}m, {G}, {F}, {E}" },
-      phrase: { en: "Still Loving You", ro: "Still Loving You" },
-      notes: [0, 1, 2, 3, 4, 5, 6, 7].map((i) => at(order[i % 4], i * 4, 4)),
-      // Klang: bass + a picked broken-chord pattern an octave above your chord (the intro's feel, not the solo)
-      app: { melody: [0, 1, 2, 3, 4, 5, 6, 7].flatMap((i) => { const ch = C[order[i % 4]][1].map((m) => m + 12); const pat = [ch[0], ch[1], ch[2], ch[0] + 12, ch[2], ch[1], ch[2], ch[0] + 12];
-        return [[bass[i % 4][0], bass[i % 4][1], i * 4, 4], ...pat.map((m, k) => ['', m, i * 4 + k * 0.5, 0.5])]; }) } },
+    { id: "L12S1", type: "play", tempo: 66, follow: "steady", guidance: { default: "recognise", first: 3 }, record: "withApp",
+      card: { en: "Left hand first. Klang plays the solo.", ro: "Întâi mâna stângă. Klang cântă solo-ul." },
+      bar:  { en: "Left hand", ro: "Mâna stângă" },
+      phrase: { en: "the left hand of Still Loving You", ro: "mâna stângă din Still Loving You" },
+      notes: LH, app: { melody: RH } },
+    { id: "L12S2", type: "play", tempo: 60, follow: "steady", guidance: { default: "recognise", first: 6 },
+      card: { en: "Now the solo, first half. Klang plays the left hand.", ro: "Acum solo-ul, prima jumătate. Klang cântă mâna stângă." },
+      bar:  { en: "Solo, first half", ro: "Solo, prima jumătate" },
+      phrase: { en: "the first half of the solo", ro: "prima jumătate a solo-ului" },
+      notes: half(RH, 16), app: { melody: half(LH, 16) } },
+    { id: "L12S3", type: "play", tempo: 66, follow: "steady", guidance: { default: "recognise", first: 3 }, record: "withApp",
+      card: { en: "The whole solo. Klang plays the left hand.", ro: "Tot solo-ul. Klang cântă mâna stângă." },
+      bar:  { en: "The whole solo", ro: "Tot solo-ul" },
+      phrase: { en: "the Still Loving You solo", ro: "solo-ul din Still Loving You" },
+      notes: RH, app: { melody: LH } },
   ],
-  headline: { en: "You played the chords of Still Loving You.", ro: "Ai cântat acordurile din Still Loving You." },
-  song: { id: "still-loving-you", title: { en: "Still Loving You (chords)", ro: "Still Loving You (acorduri)" } },
+  headline: { en: "You played Still Loving You, both hands, one at a time.", ro: "Ai cântat Still Loving You, ambele mâini, pe rând." },
+  song: { id: "still-loving-you", title: { en: "Still Loving You (intro)", ro: "Still Loving You (intro)" } },
   canNow: [
-    { id: "L12.chords", text: { en: "I can play {A}m, {G}, {F}, {E}.", ro: "Pot cânta {A}m, {G}, {F}, {E}." }, earnedIf: { stepDone: "L12S1" } },
-    { id: "L12.song", text: { en: "I played Still Loving You with chords.", ro: "Am cântat Still Loving You cu acorduri." }, earnedIf: { stepDone: "L12S2" } },
+    { id: "L12.left", text: { en: "I can play the left hand of Still Loving You.", ro: "Pot cânta mâna stângă din Still Loving You." }, earnedIf: { stepDone: "L12S1" } },
+    { id: "L12.solo", text: { en: "I played the Still Loving You solo.", ro: "Am cântat solo-ul din Still Loving You." }, earnedIf: { stepDone: "L12S3" } },
   ],
   next: null,
 };
