@@ -220,7 +220,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const userMoved = () => { movedAt = performance.now(); };
   fall.on('pending', ({ midis }) => {
     drawMap();
-    if (!midis.length) return;
+    if (!midis.length || kb._fixedRange) return; // v2: fixed view during play steps
     if (performance.now() - movedAt < 1500) { setTimeout(() => { if (!midis.every((m) => kb.isVisible(m))) { kb.ensureVisible(midis); toast(t('toast.moved', { note: markNote(midis[0]) }), 1600); } }, 1500); return; }
     kb.ensureVisible(midis);
   });

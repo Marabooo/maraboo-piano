@@ -134,6 +134,7 @@ export class LessonRunner extends Emitter {
     try { this._cleanup?.(); } catch (e) { console.error(e); }
     this._cleanup = null; this._actions = null; this._onNote = null; this._onNoteOff = null; this._findWait = false;
     this.kb.clearTargets(); this.kb.setHighlight([]); this.kb.setFound([]); this.kb.setForcedLabels([]);
+    this.kb._fixedRange = false; if (this._savedMin != null) { this.kb.opts.minKeyPx = this._savedMin; this._savedMin = null; }
     this.fall.setForcedLabels([]);
     this.audio.padOff?.({ release: 0.4 });
     this.emit('cardhide'); this.emit('tagsclear'); this.emit('skipnote', { show: false }); this.emit('big', null);
@@ -155,6 +156,10 @@ export class LessonRunner extends Emitter {
   _stepRange(midis) {
     const lo = Math.min(...midis), hi = Math.max(...midis);
     const { start, whites } = fitRange(lo, hi, { minWhites: 8, pad: 1 });
+    // v2: the whole section is always on screen (+1 key each side); keys get narrower instead of the view moving
+    if (this._savedMin == null) this._savedMin = this.kb.opts.minKeyPx;
+    if (this.kb.width) this.kb.opts.minKeyPx = Math.min(this._savedMin, Math.floor(this.kb.width / whites));
+    this.kb._fixedRange = true;
     this.kb.setRange(start, whites, { animate: this.index > 0, focus: [lo, hi] });
   }
 

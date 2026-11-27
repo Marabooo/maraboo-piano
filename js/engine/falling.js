@@ -94,6 +94,7 @@ export class FallingNotes extends Emitter {
       if (g && Math.abs(g.beat - n.beat) < 0.01) g.notes.push(n);
       else this.groups.push({ beat: n.beat, notes: [n], state: 'pending', presses: new Map(), waitedFrom: 0, approached: false });
     }
+    { const lastOn = {}; for (const n of [...notes].sort((a, b) => b.beat - a.beat)) { n.gapNext = lastOn[n.midi] != null ? lastOn[n.midi] - n.beat : Infinity; lastOn[n.midi] = n.beat; } }
     this.groups.forEach((g, i) => {
       g.index = i; g.midis = g.notes.map((n) => n.midi);
       // v2 (student request): every block of a chord takes the colour of the chord's root, in any order/inversion
@@ -392,7 +393,7 @@ export class FallingNotes extends Emitter {
       const yb = hitY - (g.beat - vpos) * ppb;
       if (yb < -10) break; // further groups are above the lane
       for (const n of g.notes) {
-        const yTop = yb - Math.max(n.dur * ppb, 22) + 3; // short notes stay visible (min ~22 px)
+        const yTop = yb - Math.max(n.dur * ppb, Math.min(22, n.gapNext * ppb - 6)) + 3; // short notes visible, never overlapping the next one
         if (yTop > H + 4) continue;
         this._drawBlock(c, n, g, dx, yTop, yb, hitY, ppb, now, ink);
       }
