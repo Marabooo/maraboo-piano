@@ -334,7 +334,8 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     runner.on('cardhide', hideCard);
     runner.on('bar', setBar);
     runner.on('skipnote', () => {}); // v2: no Skip note
-    runner.on('tag', (x) => { if (x.kind !== 'wrong' && x.kind !== 'pointer') showTag(x); }); // v2: no wrong-note or "Tap here" bubbles
+    // v2: no wrong-note or "Tap here" bubbles; from lesson 9 on, no hint bubbles either (they covered the keys to press)
+    runner.on('tag', (x) => { if (x.kind !== 'wrong' && x.kind !== 'pointer' && !(lesson.number > 8 && x.kind === 'hint')) showTag(x); });
     runner.on('big', (x) => { bigEl.replaceChildren(); if (x) bigEl.append(rich(markNote(x.letter))); }); // v2: no wrong-note bubbles (key still greys)
     runner.on('tagsclear', clearTags);
     runner.on('lane', ({ show }) => canvas.classList.toggle('on', show));
