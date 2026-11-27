@@ -14,6 +14,7 @@ import L9 from './L9.js';
 import L10 from './L10.js';
 import L11 from './L11.js';
 import L12 from './L12.js';
+import L13 from './L13.js';
 
 /** Resolve { tune, bars: [a, b] } references into plain event arrays (notes, pads, app melody). */
 function resolve(spec, table) {
@@ -46,10 +47,10 @@ function prepare(lesson, number) {
 }
 
 // v2: lesson 9 (pop chords) removed; later lessons move up (ids stay L10–L12, numbers shown are 9–11)
-export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L12, L11, L10].map((l, i) => prepare(l, i + 1));
+export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L12, L11, L10, L13].map((l, i) => prepare(l, i + 1));
 /** Planned lessons shown as "Coming soon" stones (02 §2). */
 export const COMING = [
-  { number: 12, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
+  { number: 13, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
 ];
 export { NOTE_HINT, PATTERN_HINT };
 export const lessonById = (id) => LESSONS.find((l) => l.id === id) || null;

@@ -1,7 +1,7 @@
 // Klang service worker: network-first for app files (testers always get the latest version when
 // online), cache fallback offline; cache-first for the immutable piano samples.
 // After adding files, add them to PRECACHE and bump VERSION.
-const VERSION = 'klang-v0.10.8';
+const VERSION = 'klang-v0.10.9';
 const PRECACHE = [
   './', './index.html', './manifest.webmanifest', './css/app.css', './css/keyboard.css',
   './js/main.js',
@@ -14,7 +14,7 @@ const PRECACHE = [
   './css/game.css', './js/game/daily-game.js', './js/game/puzzle.js', './js/game/sound.js', './js/game/streak.js', './js/game/strings.js',
   './js/testmode/ns.js', './js/testmode/testmode.js', './js/testmode/texts.js', './js/testmode/study-config.js',
   './js/lessons/index.js', './js/lessons/shared.js',
-  './js/lessons/L1.js', './js/lessons/L2.js', './js/lessons/L3.js', './js/lessons/L4.js', './js/lessons/L5.js', './js/lessons/L6.js', './js/lessons/L7.js', './js/lessons/L8.js', './js/lessons/L9.js', './js/lessons/L10.js', './js/lessons/L11.js', './js/lessons/L12.js',
+  './js/lessons/L1.js', './js/lessons/L2.js', './js/lessons/L3.js', './js/lessons/L4.js', './js/lessons/L5.js', './js/lessons/L6.js', './js/lessons/L7.js', './js/lessons/L8.js', './js/lessons/L9.js', './js/lessons/L10.js', './js/lessons/L11.js', './js/lessons/L12.js', './js/lessons/L13.js',
   './assets/icons/icon.svg', './assets/icons/icon-192.png', './assets/icons/icon-512.png', './assets/icons/apple-touch-icon.png',
   ...['Fs2', 'A2', 'C3', 'Ds3', 'Fs3', 'A3', 'C4', 'Ds4', 'Fs4', 'A4', 'C5', 'Ds5', 'Fs5', 'A5', 'C6', 'Ds6', 'Fs6'].map((n) => `./assets/samples/${n}.mp3`),
 ];

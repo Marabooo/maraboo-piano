@@ -31,5 +31,5 @@ export default {
     { id: "L10.left", text: { en: "I can play the left hand of Back to Black.", ro: "Pot cânta mâna stângă din Back to Black." }, earnedIf: { stepDone: "L10S1" } },
     { id: "L10.fast", text: { en: "I played Back to Black at the real speed.", ro: "Am cântat Back to Black la viteza reală." }, earnedIf: { stepDone: "L10S4" } },
   ],
-  next: null,
+  next: "L13",
 };
