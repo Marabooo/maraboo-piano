@@ -45,10 +45,11 @@ function prepare(lesson, number) {
   return { ...lesson, number, steps, section: lesson.section || ([3, 6, 7, 8, 9, 10, 11, 12].includes(number) ? 'chords' : 'notes') };
 }
 
-export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L12].map((l, i) => prepare(l, i + 1));
+// v2: lesson 9 (pop chords) removed; later lessons move up (ids stay L10–L12, numbers shown are 9–11)
+export const LESSONS = [L1, L2, L3, L4, L5, L6, L7, L8, L10, L11, L12].map((l, i) => prepare(l, i + 1));
 /** Planned lessons shown as "Coming soon" stones (02 §2). */
 export const COMING = [
-  { number: 13, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
+  { number: 12, title: { en: 'Both hands', ro: 'Cu ambele mâini' }, section: 'hands' },
 ];
 export { NOTE_HINT, PATTERN_HINT };
 export const lessonById = (id) => LESSONS.find((l) => l.id === id) || null;

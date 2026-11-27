@@ -28,5 +28,5 @@ export default {
     { id: "L8.minor", text: { en: "I can turn a major chord into a minor one.", ro: "Pot transforma un acord major în unul minor." }, earnedIf: { stepDone: "L8S1" } },
     { id: "L8.riff", text: { en: "I can play the Seven Nation Army riff.", ro: "Pot cânta riff-ul Seven Nation Army." }, earnedIf: { stepDone: "L8S2" } },
   ],
-  next: "L9",
+  next: "L10",
 };
