@@ -451,7 +451,7 @@ export class FallingNotes extends Emitter {
     if (ghost) { c.strokeStyle = (n.color || d.color); c.lineWidth = 2; c.stroke(); c.restore(); return; }
     c.fill();
     c.shadowBlur = 0;
-    if (s.black) { c.fillStyle = 'rgba(20,22,31,0.22)'; roundRect(c, x, top, w, bottom - top, Math.min(9, w / 3)); c.fill(); }
+    if (s.black) { c.fillStyle = 'rgba(20,22,31,0.32)'; roundRect(c, x, top, w, bottom - top, Math.min(9, w / 3)); c.fill(); }
     if (n.state === 'hit' && n.held) { // glow while holding
       c.fillStyle = 'rgba(255,255,255,0.35)';
       roundRect(c, x, top, w, bottom - top, Math.min(9, w / 3)); c.fill();
