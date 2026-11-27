@@ -38,9 +38,11 @@ export function findKeyScreen(root, _p, { go }) {
   const tick = () => { const left = Math.max(0, Math.ceil((end - performance.now()) / 1000)); S.info.textContent = left + ' s'; if (left <= 0) stop(); };
   const stop = () => { running = false; clearInterval(timer); big.replaceChildren(); const b = S.best('best_findkey', n); log.event('mg_end', { game: 'findkey', score: n, best: b });
     S.card(t('mg.score', { n }), t('mg.best', { n: b }), t('mg.again'), start); };
-  const start = () => { n = 0; S.score.textContent = '0'; end = performance.now() + 30000; running = true; next(); tick(); timer = setInterval(tick, 250); log.event('mg_start', { game: 'findkey' }); };
+  // v2 (27 Nov, student request): the 30 s clock starts on the first key press, not on Start
+  const start = () => { n = 0; S.score.textContent = '0'; end = 0; running = true; next(); S.info.textContent = '30 s'; log.event('mg_start', { game: 'findkey' }); };
   S.input.on('noteon', ({ midi }) => {
     if (!running) return;
+    if (!end) { end = performance.now() + 30000; timer = setInterval(tick, 250); }
     if (describe(midi).letter === describe(target).letter) { n++; S.score.textContent = String(n); S.kb.flash(midi, 'correct'); next(); }
     else S.kb.flash(midi, 'wrong');
   });
