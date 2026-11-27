@@ -102,6 +102,7 @@ export const STRINGS = {
   'top.keys': ['Which keys you see', 'Ce clape vezi'],
   'top.hint': ['Hint', 'Indiciu'],
   'top.skip': ['Skip note ▸', 'Sari peste notă ▸'],
+  'top.skip_step': ['Skip ▸', 'Sari ▸'],
   'top.fullscreen': ['Full screen', 'Ecran complet'],
   'step.eyebrow': ['Step {n} of {total}', 'Pasul {n} din {total}'],
   'step.start': ['Start', 'Începe'],

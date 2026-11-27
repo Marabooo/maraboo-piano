@@ -38,12 +38,14 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
   const coach = h('div.coach-slot', { 'aria-live': 'polite' });
   const skipNote = h('button.help-link', { type: 'button', style: { display: 'none' } }, t('top.skip'));
   const micPill = h('div.mic-pill', { style: { display: mic ? '' : 'none' } }, h('span.mic-dot'), h('span.mic-txt', t('mic.pill.listening')), h('span.lvl', h('i')));
-  const hintBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.hint'), title: t('top.hint'), style: { display: S.hints === 'ask' && !free ? '' : 'none' }, html: bulbIcon() });
+  // v2 (27 Nov): the hint bulb did nothing visible; replaced by "Skip ▸" (next step), only on lessons finished before
+  const doneBefore = !free && !!store.lessonProgress(lesson.id)?.completed;
+  const skipStepBtn = h('button.help-link', { type: 'button', style: { display: doneBefore ? '' : 'none' } }, t('top.skip_step'));
   const labelsBtn = h('button.bar-btn', { type: 'button', 'aria-label': t('top.labels', { mode: '' }) });
   const keysBtn = h('button.bar-btn.keys-btn', { type: 'button', 'aria-label': t('top.keys'), title: t('top.keys') }, h('canvas.mini-map', { width: 128, height: 40 }));
   const fsBtn = h('button.icon-btn', { type: 'button', 'aria-label': t('top.fullscreen'), title: t('top.fullscreen'), html: fsIcon() });
   const chip = h('button.help-link', { type: 'button', style: { display: 'none' } }, t('sound.auto_chip'));
-  const top = h('div.p-top', pauseBtn, free ? h('b.free-title', t('free.title')) : dots, coach, skipNote, chip, micPill, hintBtn, labelsBtn, keysBtn, fsBtn);
+  const top = h('div.p-top', pauseBtn, free ? h('b.free-title', t('free.title')) : dots, coach, skipNote, chip, micPill, skipStepBtn, labelsBtn, keysBtn, fsBtn);
   const canvas = h('canvas.lane', { 'aria-hidden': 'true' });
   const tags = h('div.tags');
   const cardLayer = h('div.card-layer');
@@ -360,7 +362,7 @@ export function practiceScreen(root, { id, query: hq, free = false }, { go }) {
     return runner;
   }
   skipNote.addEventListener('click', () => runner.action(el.classList.contains('demo') ? 'skipdemo' : 'skipnote'));
-  hintBtn.addEventListener('click', () => runner.action('hint'));
+  skipStepBtn.addEventListener('click', () => runner?.skipStep());
 
   function restartStep() { if (runner.paused) runner.resume(); log.event('step_restart', { step: runner.step?.id }); runner._enter(runner.index, { auto: true }); }
   runner = makeRunner();
@@ -431,5 +433,4 @@ function safeBottom() {
 }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const pauseIcon = () => '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.5"/><rect x="13.5" y="5" width="4" height="14" rx="1.5"/></svg>';
-const bulbIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
 const fsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';

@@ -102,6 +102,14 @@ export class LessonRunner extends Emitter {
     this._ladderThaw();
   }
 
+  /** Skip the whole current step (offered only on lessons finished before). Counts as skipped, not done. */
+  skipStep() {
+    if (this.finished || !this.step) return;
+    this.resume();
+    this.log.event('skip_step', { lesson: this.lesson.id, stepId: this.step.id });
+    this._done({ skipped: true });
+  }
+
   action(id) {
     const fn = this._actions?.[id];
     if (fn) { this.log.event('action', { lesson: this.lesson.id, stepId: this.step?.id, id }); fn(); }

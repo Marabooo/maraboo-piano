@@ -35,5 +35,5 @@ export default {
     { id: "L11.left", text: { en: "I can play the left hand of Hit the Road Jack.", ro: "Pot cânta mâna stângă din Hit the Road Jack." }, earnedIf: { stepDone: "L11S1" } },
     { id: "L11.fast", text: { en: "I played Hit the Road Jack at the real speed.", ro: "Am cântat Hit the Road Jack la viteza reală." }, earnedIf: { stepDone: "L11S4" } },
   ],
-  next: "L12",
+  next: "L10",
 };

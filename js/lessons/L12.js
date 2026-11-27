@@ -54,5 +54,5 @@ export default {
     { id: "L12.left", text: { en: "I can play the left hand of Still Loving You.", ro: "Pot cânta mâna stângă din Still Loving You." }, earnedIf: { stepDone: "L12S1" } },
     { id: "L12.solo", text: { en: "I played the Still Loving You solo.", ro: "Am cântat solo-ul din Still Loving You." }, earnedIf: { stepDone: "L12S3" } },
   ],
-  next: null,
+  next: "L11",
 };
